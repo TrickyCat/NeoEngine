@@ -2,5 +2,5 @@
 
 module ResultCommon =
     let (>>=) x f = match x with
-        | Ok x    -> f x
-        | Error e -> Error e
+                      Ok x    -> f x
+                    | Error e -> Error e

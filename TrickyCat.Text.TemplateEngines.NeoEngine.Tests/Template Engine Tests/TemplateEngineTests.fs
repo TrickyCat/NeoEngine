@@ -9,7 +9,7 @@ module ``Template Engine Tests`` =
     let private successTestData: obj [][] = [|
         
         
-    |]
+        |]
 
     let private globals = seq {
         yield """
