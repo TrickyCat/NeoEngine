@@ -17,7 +17,7 @@ module ``Template Engine Tests`` =
         """
     }
 
-    [<Test; TestCaseSource("successTestData")>]
+    //[<Test; TestCaseSource("successTestData")>]
     let ``Template Engine Should Run On Templates That Use Values From Global Scope`` templateString expected =
         renderTemplate globals emptyIncludes emptyContext templateString
         |> shouldEqual expected
