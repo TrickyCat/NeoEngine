@@ -7,16 +7,16 @@ open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
 
 type ITemplateService =
     abstract RenderTemplateString:
-        template: string
-        -> globalScopeCodeBlocks: string seq
+        globalScopeCodeBlocks: string seq
         -> includes: IReadOnlyDictionary<string, string>
+        -> template: string
         -> contextData: KeyValuePair<string, string> seq
         -> Result<string, string>
 
 
 type TemplateService() = 
     interface ITemplateService with
-        member __.RenderTemplateString template globals includes context = 
+        member __.RenderTemplateString globals includes template context = 
                 template
                 |> runParserOnString
                 >>= renderTemplate' globals includes context

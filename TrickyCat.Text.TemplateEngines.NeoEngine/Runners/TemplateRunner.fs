@@ -57,7 +57,9 @@ module TemplateRunner =
 
     let private fst' (x, _, _) = x
 
-    let renderTemplate (interpreter: IInterpreter) (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (env: KeyValuePair<string, string> seq) (template: Template) =
+    let renderTemplate 
+        (interpreter: IInterpreter) (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (env: KeyValuePair<string, string> seq)
+        (template: Template): Result<string, string> =
         try
             globals |> Seq.iter interpreter.Run
             initInterpreterEnvironment interpreter env
@@ -70,7 +72,8 @@ module TemplateRunner =
         with
         | e -> e |> fullMessage |> Error
 
-    let renderTemplateWithDefaultInterpreter (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (env: KeyValuePair<string, string> seq) (template: Template) =
+    let renderTemplateWithDefaultInterpreter (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (env: KeyValuePair<string, string> seq)
+        (template: Template): Result<string, string> =
         use interpreter = new EdgeJsInterpreter() :> IInterpreter
         renderTemplate interpreter globals includes env template
 

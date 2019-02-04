@@ -15,7 +15,7 @@ namespace TrickyCat.Text.TemplateEngines.NeoEngine.CSharp.ConsumerExample
         
         public string RenderTemplate(string template, IEnumerable<string> globalScopeCodeBlocks, IReadOnlyDictionary<string, string> includes, IEnumerable<KeyValuePair<string, string>> context)
         {
-            var result = _templateService.RenderTemplateString(template, globalScopeCodeBlocks, includes, context);
+            var result = _templateService.RenderTemplateString(globalScopeCodeBlocks, includes, template, context);
             if (result.IsOk)
             {
                 return result.ResultValue;
