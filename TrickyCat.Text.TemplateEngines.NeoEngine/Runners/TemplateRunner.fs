@@ -8,11 +8,12 @@ open TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters.EdgeJsInterpreter
 open System.Text
 open System.Collections.Generic
 
-module TemplateRunner = 
+module TemplateRunner =
+
     let rec private processTemplateNode
-        (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>)
-        (template: TemplateNode') =
-        match template with // use 'function'?
+        (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>) (templateNode: TemplateNode') =
+
+        match templateNode with // use 'function'?
         | Str s -> sb.Append s
         | Neo s -> s |> (interpreter.Run >> sb.Append)
     
@@ -56,13 +57,12 @@ module TemplateRunner =
 
     let private fst' (x, _, _) = x
 
-    let renderTemplate (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (env: KeyValuePair<string, string> seq) (templates: Template) =
+    let renderTemplate (interpreter: IInterpreter) (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (env: KeyValuePair<string, string> seq) (template: Template) =
         try
-            use interpreter = new EdgeJsInterpreter() :> IInterpreter
             globals |> Seq.iter interpreter.Run
             initInterpreterEnvironment interpreter env
 
-            templates
+            template
             |> List.fold processTemplateNode' (new StringBuilder(), interpreter, includes)
             |> fst'
             |> (fun sb -> sb.ToString())
@@ -70,3 +70,8 @@ module TemplateRunner =
         with
         | e -> e |> fullMessage |> Error
 
+    let renderTemplateWithDefaultInterpreter (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (env: KeyValuePair<string, string> seq) (template: Template) =
+        use interpreter = new EdgeJsInterpreter() :> IInterpreter
+        renderTemplate interpreter globals includes env template
+
+    let renderTemplate' = renderTemplateWithDefaultInterpreter

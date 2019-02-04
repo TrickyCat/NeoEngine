@@ -15,7 +15,7 @@ module ``Template Engine Tests Common`` =
     let renderTemplate globals includes context templateString =
             templateString
             |> runParserOnString
-            >>= renderTemplate globals includes context
+            >>= renderTemplate' globals includes context
             |> (function
                 | Ok x    -> x
                 | Error e -> failwithf "Rendering Error In Test: %s" e
