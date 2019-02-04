@@ -101,15 +101,24 @@ module NeoTemplateParserApi =
                 if closestElseIdx < closestIfIdx then
                     let elseBranchContentRaw = List.rev (List.take closestElseIdx res.acc)
                     let elseBranchContent = if List.isEmpty elseBranchContentRaw then None else Some elseBranchContentRaw
-                    let (BeginOfConditionalTemplate condition) :: ifBranchContent =
+
+                    let listChunk =
                         res.acc
                         |> List.skip (closestElseIdx + 1)
                         |> List.take (closestIfIdx - closestElseIdx)
                         |> List.rev
-                    NeoIfElseTemplate { condition = condition; ifBranchBody = ifBranchContent; elseBranchBody = elseBranchContent }
+
+                    match listChunk with
+                     (BeginOfConditionalTemplate condition) :: ifBranchContent ->
+                        NeoIfElseTemplate { condition = condition; ifBranchBody = ifBranchContent; elseBranchBody = elseBranchContent }
+                    | _                                                       ->
+                        failwith "Empty list OR its head isn't BeginOfConditionalTemplate"
                 else
-                    let (BeginOfConditionalTemplate condition) :: rest = List.rev(List.take qtyOfElementsToClosestIf res.acc)
-                    NeoIfElseTemplate { condition = condition; ifBranchBody = rest; elseBranchBody = None }
+                    match List.rev(List.take qtyOfElementsToClosestIf res.acc) with
+                     (BeginOfConditionalTemplate condition) :: rest ->
+                        NeoIfElseTemplate { condition = condition; ifBranchBody = rest; elseBranchBody = None }
+                    | _                                             ->
+                        failwith "Empty list: List.rev(List.take qtyOfElementsToClosestIf res.acc)\nOR\nFirst element is not BeginOfConditionalTemplate"
 
             if accLength > qtyOfElementsToClosestIf then
                 { res with acc = ifElseNode :: (List.skip qtyOfElementsToClosestIf res.acc) }
