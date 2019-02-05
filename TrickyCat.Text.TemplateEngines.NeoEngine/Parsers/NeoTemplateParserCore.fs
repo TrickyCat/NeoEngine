@@ -5,27 +5,29 @@ open System
 
 module NeoTemplateParserCore =
     type TemplateNode' =
-              Str of string
-            | Neo of string
-            | NeoSubstitute of string
+            | Str' of string
+            | Neo' of string
+            | NeoSubstitute' of string
 
-            | NeoInclude of string
-            | NeoIncludeValue of string
-            | NeoIncludeView of string
+            | NeoInclude' of string
+            | NeoIncludeValue' of string
+            | NeoIncludeView' of string
 
-            | BeginOfConditionalTemplate of condition: string
-            | EndOfConditionalTemplate
-            | ElseBranchOfConditionalTemplateDelimiter
+            | BeginOfConditionalTemplate' of condition: string
+            | EndOfConditionalTemplate'
+            | ElseBranchOfConditionalTemplateDelimiter'
 
-            | NeoIfElseTemplate of NeoIfElseTemplate
-    and NeoIfElseTemplate = { condition: string; ifBranchBody: TemplateNode' list; elseBranchBody: TemplateNode' list option }
+            | NeoIfElseTemplate' of NeoIfElseTemplate<TemplateNode'>
+    and 'node NeoIfElseTemplate = { condition: string; ifBranchBody: 'node list; elseBranchBody: 'node list option }
 
-    let private Neo' (s: string)                        = s.Trim() |> Neo
-    let private NeoSubstitute' (s: string)              = s.Trim() |> NeoSubstitute
-    let private BeginOfConditionalTemplate' (s: string) = s.Trim() |> BeginOfConditionalTemplate
-    let private NeoInclude' (s: string)                 = s.Trim() |> NeoInclude
-    let private NeoIncludeValue' (s: string)            = s.Trim() |> NeoIncludeValue
-    let private NeoIncludeView' (s: string)             = s.Trim() |> NeoIncludeView
+
+
+    let private Neo' (s: string)                        = s.Trim() |> Neo'
+    let private NeoSubstitute' (s: string)              = s.Trim() |> NeoSubstitute'
+    let private BeginOfConditionalTemplate' (s: string) = s.Trim() |> BeginOfConditionalTemplate'
+    let private NeoInclude' (s: string)                 = s.Trim() |> NeoInclude'
+    let private NeoIncludeValue' (s: string)            = s.Trim() |> NeoIncludeValue'
+    let private NeoIncludeView' (s: string)             = s.Trim() |> NeoIncludeView'
 
     let private maxStrLen = Int32.MaxValue
     let private str       = pstring
@@ -34,8 +36,8 @@ module NeoTemplateParserCore =
     let str_ws1 s         = str s .>> spaces1
 
     let jsStringDelim: Parser<unit, unit> = skipChar '\'' <|> skipChar '"'
-    let internal strBeforeNeoCustomizationParser : Parser<TemplateNode', unit> = attempt <| charsTillString "<%" false maxStrLen |>> Str
-    let strBeforeEos : Parser<TemplateNode', unit>                             = many1Satisfy ((<>)EOS) |>> Str
+    let internal strBeforeNeoCustomizationParser : Parser<TemplateNode', unit> = attempt <| charsTillString "<%" false maxStrLen |>> Str'
+    let strBeforeEos : Parser<TemplateNode', unit>                             = many1Satisfy ((<>)EOS) |>> Str'
     
     let endOfConditionalTemplate =
         attempt
@@ -43,7 +45,7 @@ module NeoTemplateParserCore =
             str_ws "<%" 
             >>. str_ws "}" 
             >>. str "%>" 
-            |>> (fun _ -> EndOfConditionalTemplate)
+            |>> (fun _ -> EndOfConditionalTemplate')
             )
 
     let elseBranchOfConditionalTemplate =
@@ -54,7 +56,7 @@ module NeoTemplateParserCore =
             >>. str_ws "else" 
             >>. str_ws "{" 
             >>. str "%>" 
-            |>> (fun _ -> ElseBranchOfConditionalTemplateDelimiter)
+            |>> (fun _ -> ElseBranchOfConditionalTemplateDelimiter')
             )
 
     let beginOfConditionalTemplate: Parser<TemplateNode', unit> =
@@ -98,7 +100,7 @@ module NeoTemplateParserCore =
         <|> attempt neoGeneralIncludeParser
 
     let neoSubstituteParser = str "<%=" >>. neoBodyParser |>> NeoSubstitute'
-    let neoBlockParser    = str "<%"  >>. neoBodyParser |>> Neo'
+    let neoBlockParser      = str "<%"  >>. neoBodyParser |>> Neo'
     let neoParser = 
         neoIncludeParser
         <|> neoSubstituteParser

@@ -14,11 +14,11 @@ module TemplateRunner =
         (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>) (templateNode: TemplateNode') =
 
         match templateNode with // use 'function'?
-        | Str s -> sb.Append s
-        | Neo s -> s |> (interpreter.Run >> sb.Append)
+        | Str' s -> sb.Append s
+        | Neo' s -> s |> (interpreter.Run >> sb.Append)
     
-        | NeoInclude s | NeoIncludeValue s -> sb.Append(sprintf "Unsupported include: %s" s)
-        | NeoIncludeView viewName ->
+        | NeoInclude' s | NeoIncludeValue' s -> sb.Append(sprintf "Unsupported include: %s" s)
+        | NeoIncludeView' viewName ->
             let (viewFound, viewTmplStr) = includes.TryGetValue(viewName)
             if not viewFound then sb.Append(sprintf "Include not found: %s." viewName) else
 
@@ -26,13 +26,13 @@ module TemplateRunner =
             | Error e  -> sb.Append(sprintf "Include parse failed.\nInclude: %s.\nError: %s." viewName e)
             | Ok nodes -> nodes |> List.fold (fun sb n -> processTemplateNode (sb, interpreter, includes) n) sb
 
-        | NeoSubstitute s ->
+        | NeoSubstitute' s ->
             s 
             |> sprintf "function evalFn() { try { return ((%s) || '').toString(); } catch (exn) { return ''; }}; evalFn();"
             |> interpreter.Eval
             |> sb.Append
 
-        | NeoIfElseTemplate {condition = c; ifBranchBody = bs; elseBranchBody = elseBranchBody} ->
+        | NeoIfElseTemplate' {condition = c; ifBranchBody = bs; elseBranchBody = elseBranchBody} ->
             let booleanCondition = sprintf "!!(%s)" c
             match interpreter.Eval<bool> booleanCondition with
             | None -> sb

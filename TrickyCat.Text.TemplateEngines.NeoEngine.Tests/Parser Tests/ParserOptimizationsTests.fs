@@ -23,7 +23,7 @@ module ParserOptimizationsTests =
 
         yield [| "<% if(true) { %><% } %>"; emptyTemplate |]
         yield [| "<% if(true) { %><% } else { %><% } %>"; emptyTemplate |]
-        yield [| "<% if(c) { %><% } else { %>hello<% } %>"; [NeoIfElseTemplate {  condition = "!(c)"; ifBranchBody = [Str "hello"]; elseBranchBody = None }] |]
+        yield [| "<% if(c) { %><% } else { %>hello<% } %>"; [NeoIfElseTemplate' {  condition = "!(c)"; ifBranchBody = [Str' "hello"]; elseBranchBody = None }] |]
     }
 
     let private parserUnderTest = templateParser

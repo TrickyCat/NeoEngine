@@ -7,10 +7,10 @@ open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserCore
 module ``Neo Substitute Parser Tests`` =
 
     let private successTestData: obj [] seq = seq {
-        yield [| "<%= foo.bar.baz %>"; NeoSubstitute "foo.bar.baz" |]
-        yield [| "<%= something %>"; NeoSubstitute "something" |]
-        yield [| "<%= 復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮 %>"; NeoSubstitute "復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮" |]
-        yield [| "<%= तकनिकल %>"; NeoSubstitute "तकनिकल" |]
+        yield [| "<%= foo.bar.baz %>"; NeoSubstitute' "foo.bar.baz" |]
+        yield [| "<%= something %>"; NeoSubstitute' "something" |]
+        yield [| "<%= 復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮 %>"; NeoSubstitute' "復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮" |]
+        yield [| "<%= तकनिकल %>"; NeoSubstitute' "तकनिकल" |]
     }
 
     let private failureTestData: obj [][] = [|

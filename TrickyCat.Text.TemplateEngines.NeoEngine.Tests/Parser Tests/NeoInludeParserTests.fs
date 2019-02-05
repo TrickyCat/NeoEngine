@@ -7,18 +7,18 @@ open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserCore
 module ``Neo Inlude Parser Tests`` =
 
     let private successTestData: obj [] seq = seq {
-        yield [| "<%@ something  %>"; NeoInclude "something" |]
-        yield [| "<%@something%>"; NeoInclude "something" |]
+        yield [| "<%@ something  %>"; NeoInclude' "something" |]
+        yield [| "<%@something%>"; NeoInclude' "something" |]
 
-        yield [| "<%@ value rest %>"; NeoIncludeValue "rest" |]
-        yield [| "<%@ valuerest %>"; NeoInclude "valuerest" |]
+        yield [| "<%@ value rest %>"; NeoIncludeValue' "rest" |]
+        yield [| "<%@ valuerest %>"; NeoInclude' "valuerest" |]
 
-        yield [| "<%@ include view='pdcHash' %>"; NeoIncludeView "pdcHash" |]
-        yield [| "<%@ include view=\"pdcHash\" %>"; NeoIncludeView "pdcHash" |]
-        yield [| "<%@ includeview='pdcHash' %>"; NeoInclude "includeview='pdcHash'" |]
+        yield [| "<%@ include view='pdcHash' %>"; NeoIncludeView' "pdcHash" |]
+        yield [| "<%@ include view=\"pdcHash\" %>"; NeoIncludeView' "pdcHash" |]
+        yield [| "<%@ includeview='pdcHash' %>"; NeoInclude' "includeview='pdcHash'" |]
 
-        yield [| "<%@ 復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮 %>"; NeoInclude "復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮" |]
-        yield [| "<%@ तकनिकल %>"; NeoInclude "तकनिकल" |]
+        yield [| "<%@ 復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮 %>"; NeoInclude' "復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮" |]
+        yield [| "<%@ तकनिकल %>"; NeoInclude' "तकनिकल" |]
     }
 
     let private failureTestData: obj [][] = [|
