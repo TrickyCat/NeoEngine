@@ -4,31 +4,28 @@ open NUnit.Framework
 open FsUnitTyped
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserCore
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi
+open ``Parser Tests Common``
 
-#nowarn "59"
 module ``Parser Transformations Tests`` =
-    type private T = Result<TemplateNode list, string>
-
-    let errorFmt = sprintf "Unexpected AST element: %O"
 
     let private successTestData: obj [] seq = seq {
-        yield [| [Str' "hello"]; (Ok [Str "hello"]) :> T |]
-        yield [| [Str' "hello"; Str' "world"]; (Ok [Str "hello"; Str "world"]) :> T |]
-        yield [| [Neo' "hello"]; (Ok [Neo "hello"]) :> T |]
-        yield [| [NeoSubstitute' "hello"]; (Ok [NeoSubstitute "hello"]) :> T |]
-        yield [| [NeoIncludeView' "hello"]; (Ok [NeoIncludeView "hello"]) :> T |]
+        yield [| [Str' "hello"]; okTemplate [Str "hello"] |]
+        yield [| [Str' "hello"; Str' "world"]; okTemplate [Str "hello"; Str "world"] |]
+        yield [| [Neo' "hello"]; okTemplate [Neo "hello"] |]
+        yield [| [NeoSubstitute' "hello"]; okTemplate [NeoSubstitute "hello"] |]
+        yield [| [NeoIncludeView' "hello"]; okTemplate [NeoIncludeView "hello"] |]
         
         yield [| [NeoIfElseTemplate' { condition = "p"; ifBranchBody = []; elseBranchBody = None }];
-             (Ok [NeoIfElseTemplate { condition = "p"; ifBranchBody = []; elseBranchBody = None }]) :> T |]
+                 okTemplate [NeoIfElseTemplate { condition = "p"; ifBranchBody = []; elseBranchBody = None }] |]
 
         yield [| [NeoIfElseTemplate' { condition = "p"; ifBranchBody = [Str' "hello"]; elseBranchBody = None }];
-             (Ok [NeoIfElseTemplate { condition = "p"; ifBranchBody = [Str "hello"]; elseBranchBody = None }]) :> T |]
+             okTemplate [NeoIfElseTemplate { condition = "p"; ifBranchBody = [Str "hello"]; elseBranchBody = None }] |]
 
         yield [| [NeoIfElseTemplate' { condition = "p"; ifBranchBody = [Str' "hello"; Neo' "a"]; elseBranchBody = None }];
-            (Ok [NeoIfElseTemplate { condition = "p"; ifBranchBody = [Str "hello"; Neo "a"]; elseBranchBody = None }]) :> T |]
+            okTemplate [NeoIfElseTemplate { condition = "p"; ifBranchBody = [Str "hello"; Neo "a"]; elseBranchBody = None }] |]
 
         yield [| [NeoIfElseTemplate' { condition = "p"; ifBranchBody = [Str' "hello"; Neo' "a"]; elseBranchBody = Some <| [Str' "world"; Neo' "b"] }];
-            (Ok [NeoIfElseTemplate { condition = "p"; ifBranchBody = [Str "hello"; Neo "a"]; elseBranchBody = Some <| [Str "world"; Neo "b"]  }]) :> T |]
+            okTemplate [NeoIfElseTemplate { condition = "p"; ifBranchBody = [Str "hello"; Neo "a"]; elseBranchBody = Some <| [Str "world"; Neo "b"]  }] |]
 
         yield [| [NeoIfElseTemplate' {
             condition = "p"
@@ -40,7 +37,7 @@ module ``Parser Transformations Tests`` =
             elseBranchBody = None
             }];
 
-            (Ok [NeoIfElseTemplate {
+            okTemplate [NeoIfElseTemplate {
                 condition = "p"
                 ifBranchBody = [
                     Str "hello"
@@ -49,7 +46,7 @@ module ``Parser Transformations Tests`` =
                     ]
                 elseBranchBody = None
                 }]
-                ) :> T |]
+            |]
 
 
         yield [| [NeoIfElseTemplate' {
@@ -66,7 +63,7 @@ module ``Parser Transformations Tests`` =
             ]
             }];
 
-            (Ok [NeoIfElseTemplate {
+            okTemplate [NeoIfElseTemplate {
                 condition = "p"
                 ifBranchBody = [
                     Str "hello"
@@ -79,7 +76,7 @@ module ``Parser Transformations Tests`` =
                     NeoIfElseTemplate { condition = "c"; ifBranchBody = [Str "inside"; Neo "foo"]; elseBranchBody = Some <| [Str "1"]}
                 ]
                 }]
-                ) :> T |]
+            |]
 
         yield [| [NeoIfElseTemplate' {
             condition = "p"
@@ -95,7 +92,7 @@ module ``Parser Transformations Tests`` =
             elseBranchBody = None
             }];
 
-            (Ok [NeoIfElseTemplate {
+            okTemplate [NeoIfElseTemplate {
                 condition = "p"
                 ifBranchBody = [
                     Str "hello"
@@ -108,35 +105,34 @@ module ``Parser Transformations Tests`` =
                     ]
                 elseBranchBody = None
                 }]
-                ) :> T |]
-
+            |]
 
 
         let b1 = BeginOfConditionalTemplate' "hello"
-        yield [| [b1]; (Error <| errorFmt b1) :> T |]
-        yield [| [Str' "1"; b1]; (Error <| errorFmt b1) :> T |]
-        yield [| [b1; Neo' "2"]; (Error <| errorFmt b1) :> T |]
-        yield [| [Str' "1"; b1; Neo' "2"]; (Error <| errorFmt b1) :> T |]
+        yield [| [b1]; errorTemplateUnexpectedLowNode b1 |]
+        yield [| [Str' "1"; b1]; errorTemplateUnexpectedLowNode b1 |]
+        yield [| [b1; Neo' "2"]; errorTemplateUnexpectedLowNode b1 |]
+        yield [| [Str' "1"; b1; Neo' "2"]; errorTemplateUnexpectedLowNode b1 |]
 
         let b2 = BeginOfConditionalTemplate' "hi"
-        yield [| [Neo' "foo()"; b1; b2; b1; b2; Str' "s"]; (Error <| errorFmt b1) :> T |]
-        yield [| [Neo' "foo()"; b2; b2; b1; b2; Str' "s"]; (Error <| errorFmt b2) :> T |]
+        yield [| [Neo' "foo()"; b1; b2; b1; b2; Str' "s"]; errorTemplateUnexpectedLowNode b1 |]
+        yield [| [Neo' "foo()"; b2; b2; b1; b2; Str' "s"]; errorTemplateUnexpectedLowNode b2 |]
 
         let endOfConditionalBlock = EndOfConditionalTemplate'
-        yield [| [endOfConditionalBlock]; (Error <| errorFmt endOfConditionalBlock) :> T |]
-        yield [| [Str' "foo"; Neo' "bar"; endOfConditionalBlock]; (Error <| errorFmt endOfConditionalBlock) :> T |]
+        yield [| [endOfConditionalBlock]; errorTemplateUnexpectedLowNode endOfConditionalBlock |]
+        yield [| [Str' "foo"; Neo' "bar"; endOfConditionalBlock]; errorTemplateUnexpectedLowNode endOfConditionalBlock |]
 
         let elseDelim = ElseBranchOfConditionalTemplateDelimiter'
-        yield [| [elseDelim]; (Error <| errorFmt elseDelim) :> T |]
-        yield [| [Str' "foo"; Neo' "bar"; elseDelim]; (Error <| errorFmt elseDelim) :> T |]
+        yield [| [elseDelim]; errorTemplateUnexpectedLowNode elseDelim |]
+        yield [| [Str' "foo"; Neo' "bar"; elseDelim]; errorTemplateUnexpectedLowNode elseDelim |]
 
         let includeNode = NeoInclude' "smth"
-        yield [| [includeNode]; (Error <| errorFmt includeNode) :> T |]
-        yield [| [Str' "foo"; Neo' "bar"; includeNode]; (Error <| errorFmt includeNode) :> T |]
+        yield [| [includeNode]; errorTemplateUnexpectedLowNode includeNode |]
+        yield [| [Str' "foo"; Neo' "bar"; includeNode]; errorTemplateUnexpectedLowNode includeNode |]
 
         let includeValue = NeoIncludeValue' "smth"
-        yield [| [includeValue]; (Error <| errorFmt includeValue) :> T |]
-        yield [| [Str' "foo"; Neo' "bar"; includeValue]; (Error <| errorFmt includeValue) :> T |]
+        yield [| [includeValue]; errorTemplateUnexpectedLowNode includeValue |]
+        yield [| [Str' "foo"; Neo' "bar"; includeValue]; errorTemplateUnexpectedLowNode includeValue |]
     }
 
 

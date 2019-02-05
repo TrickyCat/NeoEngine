@@ -3,11 +3,19 @@
 open FParsec
 open FsUnitTyped
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserCore
+open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi
 open System
 
+#nowarn "59"
 module ``Parser Tests Common`` =
+    type private T = Result<Template, string>
 
-    let emptyTemplate : TemplateNode' list = []
+    let emptyTemplate : TemplateNode list = []
+    let okTemplate x    = (Result.Ok x) :> T
+    let okEmptyTemplate = okTemplate emptyTemplate
+    
+    let errorTemplate e = (Result.Error e) :> T
+    let errorTemplateUnexpectedLowNode: TemplateNode' -> T = sprintf "Unexpected AST element: %O" >> errorTemplate
 
     let runParser parser str =
         match run parser str with

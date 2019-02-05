@@ -19,5 +19,5 @@ type TemplateService() =
         member __.RenderTemplateString globals includes template context = 
                 template
                 |> runParserOnString
-                >>= renderTemplate' globals includes context
+                >>= renderTemplateWithDefaultInterpreter globals includes context
 

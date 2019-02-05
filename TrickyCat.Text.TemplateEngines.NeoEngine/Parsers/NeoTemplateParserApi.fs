@@ -13,6 +13,8 @@ module NeoTemplateParserApi =
       | NeoIncludeView of string
       | NeoIfElseTemplate of NeoIfElseTemplate<TemplateNode>
 
+    type Template' = TemplateNode' list
+    type Template = TemplateNode list
 
     let rec toTemplate (nodes: TemplateNode' list): Result<TemplateNode list, string> =
         let rec runner (acc: Result<TemplateNode list, string>) (nodes: TemplateNode' list) =
@@ -45,7 +47,7 @@ module NeoTemplateParserApi =
         |> Result.map List.rev
 
 
-    type Template = TemplateNode' list
+    
 
     type private FoldIfsAcc = { output: TemplateNode' list; acc: TemplateNode' list }
 
@@ -103,13 +105,13 @@ module NeoTemplateParserApi =
                     match listChunk with
                     |(BeginOfConditionalTemplate' condition) :: ifBranchContent ->
                         NeoIfElseTemplate' { condition = condition; ifBranchBody = ifBranchContent; elseBranchBody = elseBranchContent }
-                    | _                                                        ->
+                    | _                                                         ->
                         failwith "Empty list OR its head isn't BeginOfConditionalTemplate"
                 else
                     match List.rev(List.take qtyOfElementsToClosestIf res.acc) with
                     |(BeginOfConditionalTemplate' condition) :: rest ->
                         NeoIfElseTemplate' { condition = condition; ifBranchBody = rest; elseBranchBody = None }
-                    | _                                             ->
+                    | _                                              ->
                         failwith "Empty list: List.rev(List.take qtyOfElementsToClosestIf res.acc)\nOR\nFirst element is not BeginOfConditionalTemplate"
 
             if accLength > qtyOfElementsToClosestIf then
@@ -129,8 +131,8 @@ module NeoTemplateParserApi =
                 | EndOfConditionalTemplate', { acc = [] }      -> failwith "Not supported: Unexpected end of conditional template."
                 | EndOfConditionalTemplate', _                 -> collapseConditionalBody res t
                 | ElseBranchOfConditionalTemplateDelimiter', _ -> { res with acc = t :: res.acc }
-                | _, { acc = [] }                             -> { res with output = t :: res.output }
-                | _, _                                        -> { res with acc = t :: res.acc }
+                | _, { acc = [] }                              -> { res with output = t :: res.output }
+                | _, _                                         -> { res with acc = t :: res.acc }
             ) { output = []; acc = [] }
 
         assert (List.isEmpty acc)
@@ -141,9 +143,9 @@ module NeoTemplateParserApi =
     let templateParser = 
         many((attempt neoParser) <|> (notEmpty (strBeforeNeoCustomizationParser <|> strBeforeEos)))
         .>> eof
-        |>> fold
+        |>> (fold >> toTemplate)
 
-    let runParserOnString string : Result<TemplateNode' list, string> =
+    let runParserOnString string : Result<Template, string> =
         match run templateParser string with
-        | Success(result, _, _)   -> Result.Ok result
+        | Success(result, _, _)   -> result
         | Failure(errorMsg, _, _) -> Result.Error errorMsg
