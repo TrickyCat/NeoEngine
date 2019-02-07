@@ -19,9 +19,9 @@ namespace TrickyCat.Text.TemplateEngines.NeoEngine.CSharp.ConsumerExample
             var container = ConfigureContainer(new UnityContainer());
             var svc = container.Resolve<IExampleService>();
 
-            //TestCli(svc, args);
+            TestCli(svc, args);
             //MemoryTest(svc);
-            PasswordResetPerfTest(svc);
+            //PasswordResetPerfTest(svc);
             Console.ReadLine();
         }
 

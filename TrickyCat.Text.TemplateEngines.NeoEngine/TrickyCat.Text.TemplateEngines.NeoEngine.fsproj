@@ -9,11 +9,12 @@
     <OutputType>Library</OutputType>
     <RootNamespace>TrickyCat.Text.TemplateEngines.NeoEngine</RootNamespace>
     <AssemblyName>TrickyCat.Text.TemplateEngines.NeoEngine</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <UseStandardResourceNames>True</UseStandardResourceNames>
     <WarningsAsErrors>3239;$(WarningsAsErrors)</WarningsAsErrors>
     <Name>TrickyCat.Text.TemplateEngines.NeoEngine</Name>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -101,9 +102,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.ValueTuple">
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="System.ValueTuple" />
   </ItemGroup>
   <PropertyGroup>
     <PreBuildEvent>xcopy "$(SolutionDir)packages\EdgeJs.9.3.4\content" "$(ProjectDir)" /E /Y</PreBuildEvent>
