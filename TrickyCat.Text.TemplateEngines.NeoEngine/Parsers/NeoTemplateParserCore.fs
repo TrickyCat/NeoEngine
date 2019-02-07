@@ -21,7 +21,6 @@ module NeoTemplateParserCore =
     and 'node NeoIfElseTemplate = { condition: string; ifBranchBody: 'node list; elseBranchBody: 'node list option }
 
 
-
     let private Neo' (s: string)                        = s.Trim() |> Neo'
     let private NeoSubstitute' (s: string)              = s.Trim() |> NeoSubstitute'
     let private BeginOfConditionalTemplate' (s: string) = s.Trim() |> BeginOfConditionalTemplate'
@@ -32,14 +31,14 @@ module NeoTemplateParserCore =
     let private maxStrLen = Int32.MaxValue
     let private str       = pstring
     let private ws        = spaces
-    let str_ws s          = str s .>> ws
-    let str_ws1 s         = str s .>> spaces1
+    let private str_ws s  = str s .>> ws
+    let private str_ws1 s = str s .>> spaces1
 
-    let jsStringDelim: Parser<unit, unit> = skipChar '\'' <|> skipChar '"'
+    let private jsStringDelim: Parser<unit, unit>                              = skipChar '\'' <|> skipChar '"'
     let internal strBeforeNeoCustomizationParser : Parser<TemplateNode', unit> = attempt <| charsTillString "<%" false maxStrLen |>> Str'
-    let strBeforeEos : Parser<TemplateNode', unit>                             = many1Satisfy ((<>)EOS) |>> Str'
+    let internal strBeforeEos : Parser<TemplateNode', unit>                    = many1Satisfy ((<>)EOS) |>> Str'
     
-    let endOfConditionalTemplate =
+    let private endOfConditionalTemplate =
         attempt
         <| (
             str_ws "<%" 
@@ -48,7 +47,7 @@ module NeoTemplateParserCore =
             |>> (fun _ -> EndOfConditionalTemplate')
             )
 
-    let elseBranchOfConditionalTemplate =
+    let private elseBranchOfConditionalTemplate =
         attempt
         <| (
             str_ws "<%" 
@@ -59,7 +58,7 @@ module NeoTemplateParserCore =
             |>> (fun _ -> ElseBranchOfConditionalTemplateDelimiter')
             )
 
-    let beginOfConditionalTemplate: Parser<TemplateNode', unit> =
+    let private beginOfConditionalTemplate: Parser<TemplateNode', unit> =
         let endp = str_ws ")" .>> str_ws "{"
         let conditionBase = anyChar
         let conditionP = manyTill conditionBase (attempt endp) |>> (fun x -> String.Join("", x))
@@ -74,10 +73,10 @@ module NeoTemplateParserCore =
             )
 
 
-    let neoBodyParser            = charsTillString "%>" true maxStrLen
-    let neoGeneralIncludeParser  = str_ws "<%@" >>. neoBodyParser |>> NeoInclude'
+    let private neoBodyParser            = charsTillString "%>" true maxStrLen
+    let private neoGeneralIncludeParser  = str_ws "<%@" >>. neoBodyParser |>> NeoInclude'
 
-    let neoIncludeViewParser: Parser<TemplateNode', unit> = 
+    let private neoIncludeViewParser: Parser<TemplateNode', unit> = 
         str_ws "<%@" 
         >>. str_ws1 "include" 
         >>. str_ws "view" 
@@ -88,20 +87,20 @@ module NeoTemplateParserCore =
         .>> str "%>"
         |>> NeoIncludeView'
 
-    let neoValueParser: Parser<TemplateNode', unit> =
+    let private neoValueParser: Parser<TemplateNode', unit> =
         str_ws "<%@" 
         >>. str_ws1 "value" 
         >>. neoBodyParser
         |>> NeoIncludeValue'
 
-    let neoIncludeParser =
+    let internal neoIncludeParser =
         attempt neoIncludeViewParser
         <|> attempt neoValueParser
         <|> attempt neoGeneralIncludeParser
 
-    let neoSubstituteParser = str "<%=" >>. neoBodyParser |>> NeoSubstitute'
-    let neoBlockParser      = str "<%"  >>. neoBodyParser |>> Neo'
-    let neoParser = 
+    let internal neoSubstituteParser = str "<%=" >>. neoBodyParser |>> NeoSubstitute'
+    let internal neoBlockParser      = str "<%"  >>. neoBodyParser |>> Neo'
+    let internal neoParser = 
         neoIncludeParser
         <|> neoSubstituteParser
         <|> beginOfConditionalTemplate

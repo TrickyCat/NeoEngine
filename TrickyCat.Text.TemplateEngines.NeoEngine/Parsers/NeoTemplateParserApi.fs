@@ -13,10 +13,9 @@ module NeoTemplateParserApi =
       | NeoIncludeView of string
       | NeoIfElseTemplate of NeoIfElseTemplate<TemplateNode>
 
-    type Template' = TemplateNode' list
     type Template = TemplateNode list
 
-    let rec toTemplate (nodes: TemplateNode' list): Result<TemplateNode list, string> =
+    let rec internal toTemplate (nodes: TemplateNode' list): Result<TemplateNode list, string> =
         let rec runner (acc: Result<TemplateNode list, string>) (nodes: TemplateNode' list) =
             acc
             >>= (fun accList ->
