@@ -61,7 +61,6 @@
     <Compile Include="Runners\TemplateRunnerHelpers.fs" />
     <Compile Include="Services\TemplateService.fs" />
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
     <None Include="DevHelpers.fsx" />

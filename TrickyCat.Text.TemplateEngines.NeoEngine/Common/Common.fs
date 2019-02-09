@@ -3,8 +3,6 @@
 open System.Text
 
 module Common =
-    //let await = Async.AwaitTask
-
     let toString x = x.ToString()
 
     let fullMessage (e: exn) =

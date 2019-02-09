@@ -3,7 +3,7 @@
 open System.Reflection
 open System.IO
 
-module ``Template Runner Helpers`` =
+module TemplateRunnerHelpers =
 
     let globalFormatDate () =
         let assembly = Assembly.GetExecutingAssembly()

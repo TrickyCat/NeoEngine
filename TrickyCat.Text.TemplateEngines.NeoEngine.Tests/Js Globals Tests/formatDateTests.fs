@@ -3,7 +3,7 @@
 open FsUnitTyped
 open NUnit.Framework
 open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.``Template Engine Tests Common``
-open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.``Template Runner Helpers``
+open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunnerHelpers
 
 module ``'formatDate' Function Tests`` =
     let private formatDateFunctionSpec: obj [][] = [|
