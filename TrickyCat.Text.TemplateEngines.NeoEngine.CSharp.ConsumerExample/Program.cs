@@ -156,16 +156,12 @@ function myFunc(x) { return x * 100 + 23; }
             var contextJson = File.ReadAllText(contextFilePath);
             var context = JsonConvert.DeserializeObject<Dictionary<string, object>>(contextJson)
                 .ToDictionary(
-                    kvp => $"{kvp.Key}",
-                    kvp =>
-                    {
-                        var r = kvp.Value is string
+                    kvp => kvp.Key,
+                    kvp => kvp.Value is string
                             ? $"'{kvp.Value}'"
                             : (kvp.Value is bool
                                 ? kvp.Value.ToString().ToLowerInvariant()
-                                : kvp.Value.ToString());
-                        return r;
-                    }
+                                : kvp.Value.ToString())
                 );
             return context;
         }

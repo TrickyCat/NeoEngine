@@ -7,26 +7,26 @@ open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserCore
 module ``Neo Block Parser Tests`` =
 
     let private successTestData: obj [] seq = seq {
-        yield [| "<% %>"; Neo "" |]
+        yield [| "<% %>"; Neo' "" |]
 
-        yield [| "<% some code block %>"; Neo "some code block" |]
-        yield [| "<% 復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮 %>"; Neo "復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮" |]
-        yield [| "<% 復案ぼへび    復案ぼへび  復案ぼへび %>"; Neo "復案ぼへび    復案ぼへび  復案ぼへび" |]
-        yield [| "<% तकनिकल %>"; Neo "तकनिकल" |]
-        yield [| "<% तकनिकल तकनिकल तकनिकल %>"; Neo "तकनिकल तकनिकल तकनिकल" |]
-        yield [| "<% foo.bar.baz %>"; Neo "foo.bar.baz" |]
+        yield [| "<% some code block %>"; Neo' "some code block" |]
+        yield [| "<% 復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮 %>"; Neo' "復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮" |]
+        yield [| "<% 復案ぼへび    復案ぼへび  復案ぼへび %>"; Neo' "復案ぼへび    復案ぼへび  復案ぼへび" |]
+        yield [| "<% तकनिकल %>"; Neo' "तकनिकल" |]
+        yield [| "<% तकनिकल तकनिकल तकनिकल %>"; Neo' "तकनिकल तकनिकल तकनिकल" |]
+        yield [| "<% foo.bar.baz %>"; Neo' "foo.bar.baz" |]
 
-        yield [| "<%= foo.bar.baz %>"; Neo "= foo.bar.baz" |]
-        yield [| "<%= 復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮 %>"; Neo "= 復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮" |]
-        yield [| "<%= 復案  びえ  ヒモ %>"; Neo "= 復案  びえ  ヒモ" |]
-        yield [| "<%= तकनिकलतकनिकलतकनिकल %>"; Neo "= तकनिकलतकनिकलतकनिकल" |]
-        yield [| "<%= तकनिकल   तकनिकल %>"; Neo "= तकनिकल   तकनिकल" |]
+        yield [| "<%= foo.bar.baz %>"; Neo' "= foo.bar.baz" |]
+        yield [| "<%= 復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮 %>"; Neo' "= 復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮" |]
+        yield [| "<%= 復案  びえ  ヒモ %>"; Neo' "= 復案  びえ  ヒモ" |]
+        yield [| "<%= तकनिकलतकनिकलतकनिकल %>"; Neo' "= तकनिकलतकनिकलतकनिकल" |]
+        yield [| "<%= तकनिकल   तकनिकल %>"; Neo' "= तकनिकल   तकनिकल" |]
         
-        yield [| "<%@ someInclude %>"; Neo "@ someInclude" |]
-        yield [| "<%@ 復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮 %>"; Neo "@ 復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮" |]
-        yield [| "<%@ 復案   びえ ホ %>"; Neo "@ 復案   びえ ホ" |]
-        yield [| "<%@ तकनिकलतकनिकलतकनिकल %>"; Neo "@ तकनिकलतकनिकलतकनिकल" |]
-        yield [| "<%@ तक  निकलत    कनिक  लतकनिकल %>"; Neo "@ तक  निकलत    कनिक  लतकनिकल" |]
+        yield [| "<%@ someInclude %>"; Neo' "@ someInclude" |]
+        yield [| "<%@ 復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮 %>"; Neo' "@ 復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮" |]
+        yield [| "<%@ 復案   びえ ホ %>"; Neo' "@ 復案   びえ ホ" |]
+        yield [| "<%@ तकनिकलतकनिकलतकनिकल %>"; Neo' "@ तकनिकलतकनिकलतकनिकल" |]
+        yield [| "<%@ तक  निकलत    कनिक  लतकनिकल %>"; Neo' "@ तक  निकलत    कनिक  लतकनिकल" |]
     }
 
     let private failureTestData: obj [][] = [|

@@ -7,10 +7,10 @@ open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserCore
 module ``Tests For Parser Of A String Before Neo Customization`` =
 
     let private successTestData: obj [] seq = seq {
-       yield [|"<%"; Str ""|]
-       yield [|"before<%"; Str "before"|]
+       yield [|"<%"; Str' ""|]
+       yield [|"before<%"; Str' "before"|]
        yield [|       "<html><body><p>Some content</p><%= footer%></body></html>";
-            Str "<html><body><p>Some content</p>" |]
+            Str' "<html><body><p>Some content</p>" |]
     }
 
     let private failureTestData: obj [] seq = seq {

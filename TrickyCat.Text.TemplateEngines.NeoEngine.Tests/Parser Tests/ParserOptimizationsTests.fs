@@ -7,23 +7,23 @@ open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi
 
 module ParserOptimizationsTests =
     let private successTestData: obj [] seq = seq {
-        yield [| "<%   %>"; emptyTemplate |]
-        yield [| "<%%>"; emptyTemplate |]
+        yield [| "<%   %>"; okEmptyTemplate |]
+        yield [| "<%%>"; okEmptyTemplate |]
 
-        yield [| "<%=   %>"; emptyTemplate |]
-        yield [| "<%=%>"; emptyTemplate |]
+        yield [| "<%=   %>"; okEmptyTemplate |]
+        yield [| "<%=%>"; okEmptyTemplate |]
 
-        yield [| "<%@   %>"; emptyTemplate |]
-        yield [| "<%@%>"; emptyTemplate |]
+        yield [| "<%@   %>"; okEmptyTemplate |]
+        yield [| "<%@%>"; okEmptyTemplate |]
 
-        yield [| "<%@ include view='' %>"; emptyTemplate |]
-        yield [| "<%@ include view=\"\" %>"; emptyTemplate |]
+        yield [| "<%@ include view='' %>"; okEmptyTemplate |]
+        yield [| "<%@ include view=\"\" %>"; okEmptyTemplate |]
         
-        yield [| "<%@ value   %>"; emptyTemplate |]
+        yield [| "<%@ value   %>"; okEmptyTemplate |]
 
-        yield [| "<% if(true) { %><% } %>"; emptyTemplate |]
-        yield [| "<% if(true) { %><% } else { %><% } %>"; emptyTemplate |]
-        yield [| "<% if(c) { %><% } else { %>hello<% } %>"; [NeoIfElseTemplate {  condition = "!(c)"; ifBranchBody = [Str "hello"]; elseBranchBody = None }] |]
+        yield [| "<% if(true) { %><% } %>"; okEmptyTemplate |]
+        yield [| "<% if(true) { %><% } else { %><% } %>"; okEmptyTemplate |]
+        yield [| "<% if(c) { %><% } else { %>hello<% } %>"; okTemplate [NeoIfElseTemplate {  condition = "!(c)"; ifBranchBody = [Str "hello"]; elseBranchBody = None }] |]
     }
 
     let private parserUnderTest = templateParser

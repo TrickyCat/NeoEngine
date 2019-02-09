@@ -11,13 +11,10 @@ open System.Collections.Generic
 module TemplateRunner =
 
     let rec private processTemplateNode
-        (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>) (templateNode: TemplateNode') =
-
-        match templateNode with // use 'function'?
-        | Str s -> sb.Append s
-        | Neo s -> s |> (interpreter.Run >> sb.Append)
-    
-        | NeoInclude s | NeoIncludeValue s -> sb.Append(sprintf "Unsupported include: %s" s)
+        (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>) =
+        function
+        | Str s                   -> sb.Append s
+        | Neo s                   -> s |> (interpreter.Run >> sb.Append)
         | NeoIncludeView viewName ->
             let (viewFound, viewTmplStr) = includes.TryGetValue(viewName)
             if not viewFound then sb.Append(sprintf "Include not found: %s." viewName) else
@@ -43,9 +40,7 @@ module TemplateRunner =
                     match elseBranchBody with
                     | None -> sb
                     | Some es -> es |> List.fold (fun sb n -> processTemplateNode (sb, interpreter, includes) n) sb
-        
-        // TODO: remove in favor of specific matches for better correctness and type safety
-        | _ -> sb
+
 
     let private initInterpreterEnvironment (interpreter: IInterpreter) (env: KeyValuePair<string, string> seq) =
         env
@@ -76,5 +71,3 @@ module TemplateRunner =
         (template: Template): Result<string, string> =
         use interpreter = new EdgeJsInterpreter() :> IInterpreter
         renderTemplate interpreter globals includes env template
-
-    let renderTemplate' = renderTemplateWithDefaultInterpreter
