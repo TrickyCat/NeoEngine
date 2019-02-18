@@ -25,7 +25,7 @@ module TemplateRunner =
 
         | NeoSubstitute s ->
             s 
-            |> sprintf "function evalFn() { try { return ((%s) || '').toString(); } catch (exn) { return ''; }}; evalFn();"
+            |> sprintf "(() => { try { return ((%s) || '').toString(); } catch (exn) { return ''; }})();"
             |> interpreter.Eval
             |> sb.Append
 
