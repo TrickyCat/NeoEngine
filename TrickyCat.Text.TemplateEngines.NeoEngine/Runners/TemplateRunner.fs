@@ -10,6 +10,8 @@ open System.Collections.Generic
 
 module TemplateRunner =
 
+    type private S = System.String
+
     let rec private processTemplateNode
         (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>) =
         function
@@ -42,9 +44,16 @@ module TemplateRunner =
                     | Some es -> es |> List.fold (fun sb n -> processTemplateNode (sb, interpreter, includes) n) sb
 
 
-    let private initInterpreterEnvironment (interpreter: IInterpreter) (env: KeyValuePair<string, string> seq) =
+    let private initInterpreterEnvironmentWithGlobals (interpreter: IInterpreter) (globals: string seq) =
+        S.Join(S.Empty, globals)
+        |> interpreter.Run
+
+
+    let private initInterpreterEnvironmentWithContextValues (interpreter: IInterpreter) (env: KeyValuePair<string, string> seq) =
         env
-        |> Seq.iter(fun x -> interpreter.Run(sprintf "var %s = %s;" x.Key x.Value))
+        |> Seq.fold (fun (sb: StringBuilder) kvp -> sprintf "var %s = %s;" kvp.Key kvp.Value |> sb.AppendLine) (new StringBuilder())
+        |> (toString >> interpreter.Run)
+
 
     let private processTemplateNode' x y =
         processTemplateNode x y |> ignore
@@ -56,8 +65,8 @@ module TemplateRunner =
         (interpreter: IInterpreter) (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (env: KeyValuePair<string, string> seq)
         (template: Template): Result<string, string> =
         try
-            globals |> Seq.iter interpreter.Run
-            initInterpreterEnvironment interpreter env
+            let r1 = initInterpreterEnvironmentWithGlobals interpreter globals
+            let r2 = initInterpreterEnvironmentWithContextValues interpreter env
 
             template
             |> List.fold processTemplateNode' (new StringBuilder(), interpreter, includes)

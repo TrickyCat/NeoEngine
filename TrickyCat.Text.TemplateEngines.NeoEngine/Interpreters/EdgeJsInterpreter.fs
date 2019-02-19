@@ -3,6 +3,7 @@
 open InterpreterBase
 open EdgeJs
 open System
+open TrickyCat.Text.TemplateEngines.NeoEngine.Common
 
 module EdgeJsInterpreter =
     type EdgeJsInterpreter() =
@@ -36,13 +37,13 @@ module EdgeJsInterpreter =
                .Add("script", jsString)
                .Add("drop", drop)
             |> fn.Invoke
-            |> (fun t -> t.Result)
-            
+            |> (fun t -> try t.Result |> Ok with e -> e |> fullMessage |> Error)
+
         interface IInterpreter with
             member __.Run jsString =
                 jsString
                 |> exec false
-                |> ignore
+                |> Result.map (fun _ -> ())
 
             member __.Eval jsString =
                 jsString
@@ -51,6 +52,6 @@ module EdgeJsInterpreter =
             member __.Eval<'a> jsString =
                 jsString
                 |> exec false
-                |> (fun x -> try Some (Convert.ChangeType(x, typeof<'a>) :?> 'a) with _ -> None)
+                |> Result.bind (fun x -> try Convert.ChangeType(x, typeof<'a>) :?> 'a |> Ok with e -> e |> fullMessage |> Error)
 
             member __.Dispose() = exec true String.Empty |> ignore

@@ -28,6 +28,18 @@ let chars =
         .Add('S', { char = 'S'; allowsNum = Some({ maxNum = (* 2 *)4; allowsLeadZero = true });  canBeFollowedByIandL = false; desc = "Seconds (0-59)" })
         .Add('P', { char = 'P'; allowsNum = None;                                         canBeFollowedByIandL = false; desc = "AM/PM" })
 
+let rnd = new Random()
+let randomStr minLength maxLength : string =
+    let length = rnd.Next(minLength, maxLength + 1)
+    new String(Array.init length (fun _ -> rnd.Next(97, 123) |> char))
+let randomStr' () = randomStr 0 3
+
+let withRandomString (coll: string seq) =
+    coll
+    |> Seq.collect(fun s -> seq {
+        yield s
+        yield sprintf "%s%s%s" (randomStr'()) s (randomStr'())
+        })
 
 let withNumberSpecifier maxNum (coll: string seq) =
     coll
@@ -89,8 +101,10 @@ let toDataRows dateVar : string seq -> string seq =
 let randomFormats qtyPerPattern qty (coll: string seq) =
     let collA = Array.ofSeq coll
     let length = collA.Length
-    let rnd = new Random()
-    let picker () = rnd.Next(length) |> Array.get collA
+    let picker () =
+        rnd.Next(length)
+        |> Array.get collA
+        |> (fun s -> sprintf "%s%s%s" (randomStr'()) s (randomStr'()))
 
     {1..qty}
     |> Seq.map (fun _ ->
@@ -127,4 +141,4 @@ let singleFormatsAndMultiple qtyPerPattern qty = seq {
 let singleToFile = toFile singleParams
 let multipleToFile qtyPerPattern qty = toFile (singleParams >> (randomFormats qtyPerPattern qty))
 let singleAndMultiToFile qtyPerPattern qty = toFile (fun () -> singleFormatsAndMultiple qtyPerPattern qty)
-
+// singleAndMultiToFile 10 400 @"c:\1.html"
