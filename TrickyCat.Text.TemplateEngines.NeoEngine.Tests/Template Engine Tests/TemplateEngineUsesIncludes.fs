@@ -12,13 +12,15 @@ module ``Template Engine Uses Includes`` =
         [| "<%@ include view='include1' %><%@ include view='include2' %><%= greet('World') %>"; "Hello, World! (from include2)" |]
         [| "<%@ include view='include2' %><%@ include view='include1' %><%= greet('World') %>"; "Hello, World!" |]
         [| "<%= greet('World') %><%@ include view='include1' %><%= greet('World') %> <%@ include view='include2' %><%= greet('World') %>"; "Hello, World! Hello, World! (from include2)" |]
-        [| "<%@ include view='someInclude' %><%= greet('World') %>"; "Include not found: someInclude." |] // tmp solution while reporting not added to the runner
+        
 
         //[| "<%@ include view='include1' %><%@ include view='include2' %><%= magicNumber %>"; "" |]
         [| "<%= magicNumber %>"; "" |]
         //[| "<%@ include view='include1' %><%= magicNumber %>"; "42" |]
         //[| "<%@ include view='include2' %><%= magicNumber %>"; "" |]
     |]
+
+
 
     let private includes =
         Map.empty<string, string>
@@ -39,4 +41,41 @@ module ``Template Engine Uses Includes`` =
     let ``Template Engine Should Use Includes Referenced In Template`` templateString expected =
         renderTemplate emptyGlobals includes emptyContext templateString
         |> shouldEqual expected
+
+
+    let private missingIncludesTestData: obj [][] = [|
+        [| "<%@ include view='someInclude' %><%= greet('World') %>" |]
+        |]
+
+    [<Test; TestCaseSource("missingIncludesTestData")>]
+    let ``Template Engine Should Signal On Missing Includes Referenced In Template`` templateString =
+        runEngineOnMalformedInputs emptyGlobals includes emptyContext templateString
+
+
+    let private malformedIncludesTestData: obj [][] = [|
+        [| 
+            "<%@ include view='someInclude' %><%= greet('World') %>"
+            includes.Add("someInclude", """<%""")
+        |]
+        [| 
+            "<%@ include view='someInclude' %><%= greet('World') %>"
+            includes.Add("someInclude", """<%=""")
+        |]
+        //[| 
+        //    "<%@ include view='someInclude' %><%= greet('World') %>";
+        //    includes.Add("someInclude", """%>""")
+        //|]
+        [| 
+            "<%@ include view='someInclude' %><%= greet('World') %>";
+            includes.Add("someInclude", """a<%b""")
+        |]
+        [| 
+            "<%@ include view='someInclude' %><%= greet('World') %>";
+            includes.Add("someInclude", """a<%= b""")
+        |]
+        |]
+
+    [<Test; TestCaseSource("malformedIncludesTestData")>]
+    let ``Template Engine Should Signal On Malformed Includes Referenced In Template`` templateString includes =
+        runEngineOnMalformedInputs emptyGlobals includes emptyContext templateString
 

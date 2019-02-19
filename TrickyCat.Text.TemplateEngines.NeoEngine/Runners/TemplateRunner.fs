@@ -17,10 +17,10 @@ module TemplateRunner =
         | Neo s                   -> s |> (interpreter.Run >> sb.Append)
         | NeoIncludeView viewName ->
             let (viewFound, viewTmplStr) = includes.TryGetValue(viewName)
-            if not viewFound then sb.Append(sprintf "Include not found: %s." viewName) else
+            if not viewFound then failwith (sprintf "Include not found: %s." viewName) else
 
             match runParserOnString viewTmplStr with
-            | Error e  -> sb.Append(sprintf "Include parse failed.\nInclude: %s.\nError: %s." viewName e)
+            | Error e  -> failwith (sprintf "Include parse failed.\nInclude: %s.\nError: %s." viewName e)
             | Ok nodes -> nodes |> List.fold (fun sb n -> processTemplateNode (sb, interpreter, includes) n) sb
 
         | NeoSubstitute s ->
@@ -29,13 +29,13 @@ module TemplateRunner =
             |> interpreter.Eval
             |> sb.Append
 
-        | NeoIfElseTemplate {condition = c; ifBranchBody = bs; elseBranchBody = elseBranchBody} ->
+        | NeoIfElseTemplate {condition = c; ifBranchBody = ifBranchBody; elseBranchBody = elseBranchBody} ->
             let booleanCondition = sprintf "!!(%s)" c
             match interpreter.Eval<bool> booleanCondition with
             | None -> sb
             | Some conditionResult ->
                 if conditionResult then
-                    bs |> List.fold (fun sb n -> processTemplateNode (sb, interpreter, includes) n) sb
+                    ifBranchBody |> List.fold (fun sb n -> processTemplateNode (sb, interpreter, includes) n) sb
                 else
                     match elseBranchBody with
                     | None -> sb
@@ -44,7 +44,7 @@ module TemplateRunner =
 
     let private initInterpreterEnvironment (interpreter: IInterpreter) (env: KeyValuePair<string, string> seq) =
         env
-        |> Seq.iter(fun x -> interpreter.Run(sprintf "%s = %s" x.Key x.Value))
+        |> Seq.iter(fun x -> interpreter.Run(sprintf "var %s = %s;" x.Key x.Value))
 
     let private processTemplateNode' x y =
         processTemplateNode x y |> ignore
