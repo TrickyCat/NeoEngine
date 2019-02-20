@@ -1,6 +1,7 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.Runners
 
 open TrickyCat.Text.TemplateEngines.NeoEngine.Common
+open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserCore
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi
 open TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters.InterpreterBase
@@ -15,34 +16,50 @@ module TemplateRunner =
     let rec private processTemplateNode
         (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>) =
         function
-        | Str s                   -> sb.Append s
-        | Neo s                   -> s |> (interpreter.Run >> sb.Append)
+        | Str s                   -> s |> sb.Append |> Ok
+        | Neo s                   -> s |> interpreter.Run |> Result.map (fun _ -> sb)
         | NeoIncludeView viewName ->
-            let (viewFound, viewTmplStr) = includes.TryGetValue(viewName)
-            if not viewFound then failwith (sprintf "Include not found: %s." viewName) else
-
-            match runParserOnString viewTmplStr with
-            | Error e  -> failwith (sprintf "Include parse failed.\nInclude: %s.\nError: %s." viewName e)
-            | Ok nodes -> nodes |> List.fold (fun sb n -> processTemplateNode (sb, interpreter, includes) n) sb
+            let (viewFound, viewTemplateString) = includes.TryGetValue(viewName)
+            if not viewFound then
+                Error <| sprintf "Include not found: %s." viewName
+            else
+                viewTemplateString
+                |> runParserOnString
+                |> Result.mapError (sprintf "Parse of include failed.\nInclude: %s.\nError: %s." viewName)
+                |> Result.bind (List.fold (fun acc n ->
+                        match acc with
+                        | Ok sb -> processTemplateNode (sb, interpreter, includes) n
+                        | _ -> acc
+                    ) (Ok sb))
 
         | NeoSubstitute s ->
             s 
-            |> sprintf "(() => { try { return ((%s) || '').toString(); } catch (exn) { return ''; }})();"
+            |> sprintf "(() => { try { return ((%s) || '').toString(); } catch (exn) { return ''; }})();" // todo: remove guards
             |> interpreter.Eval
-            |> sb.Append
+            |> Result.map sb.Append
 
-        | NeoIfElseTemplate {condition = c; ifBranchBody = ifBranchBody; elseBranchBody = elseBranchBody} ->
-            let booleanCondition = sprintf "!!(%s)" c
-            match interpreter.Eval<bool> booleanCondition with
-            | None -> sb
-            | Some conditionResult ->
-                if conditionResult then
-                    ifBranchBody |> List.fold (fun sb n -> processTemplateNode (sb, interpreter, includes) n) sb
-                else
+        | NeoIfElseTemplate {condition = condition; ifBranchBody = ifBranchBody; elseBranchBody = elseBranchBody} ->
+            condition
+            |> sprintf "!!(%s)"
+            |> interpreter.Eval<bool>
+            |> Result.bind (function
+                | true -> ifBranchBody |> List.fold (fun acc n ->
+                    match acc with
+                    | Ok sb -> processTemplateNode (sb, interpreter, includes) n
+                    | _ -> acc
+                            ) (Ok sb)
+
+                | false ->
                     match elseBranchBody with
-                    | None -> sb
-                    | Some es -> es |> List.fold (fun sb n -> processTemplateNode (sb, interpreter, includes) n) sb
+                    | None -> Ok sb
+                    | Some es -> es |> List.fold (fun acc n ->
+                        match acc with
+                        | Ok sb -> processTemplateNode (sb, interpreter, includes) n
+                        | _ -> acc
+                                    ) (Ok sb)
+                )
 
+        //| _ -> Ok sb
 
     let private initInterpreterEnvironmentWithGlobals (interpreter: IInterpreter) (globals: string seq) =
         S.Join(S.Empty, globals)
