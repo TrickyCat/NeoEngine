@@ -17,7 +17,9 @@ module TemplateRunner =
         (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>) =
         function
         | Str s                   -> s |> sb.Append |> Ok
+
         | Neo s                   -> s |> interpreter.Run |> Result.map (fun _ -> sb)
+
         | NeoIncludeView viewName ->
             let (viewFound, viewTemplateString) = includes.TryGetValue(viewName)
             if not viewFound then
@@ -26,7 +28,8 @@ module TemplateRunner =
                 viewTemplateString
                 |> runParserOnString
                 |> Result.mapError (sprintf "Parse of include failed.\nInclude: %s.\nError: %s." viewName)
-                |> Result.bind (List.fold (fun acc n ->
+                |> Result.bind (
+                    List.fold (fun acc n ->
                         match acc with
                         | Ok sb -> processTemplateNode (sb, interpreter, includes) n
                         | _ -> acc
@@ -38,26 +41,23 @@ module TemplateRunner =
             |> interpreter.Eval
             |> Result.map sb.Append
 
-        | NeoIfElseTemplate {condition = condition; ifBranchBody = ifBranchBody; elseBranchBody = elseBranchBody} ->
+        | NeoIfElseTemplate {condition = condition; ifBranchBody = ifBranchBody; elseBranchBody = maybeElseBranchBody} ->
             condition
             |> sprintf "!!(%s)"
             |> interpreter.Eval<bool>
-            |> Result.bind (function
-                | true -> ifBranchBody |> List.fold (fun acc n ->
+            |> Result.map (function
+                | true  -> ifBranchBody
+                | false -> match maybeElseBranchBody with
+                           | None                -> []
+                           | Some elseBranchBody -> elseBranchBody
+            )
+            |> Result.bind (
+                List.fold (fun acc n ->
                     match acc with
                     | Ok sb -> processTemplateNode (sb, interpreter, includes) n
-                    | _ -> acc
-                            ) (Ok sb)
-
-                | false ->
-                    match elseBranchBody with
-                    | None -> Ok sb
-                    | Some es -> es |> List.fold (fun acc n ->
-                        match acc with
-                        | Ok sb -> processTemplateNode (sb, interpreter, includes) n
-                        | _ -> acc
-                                    ) (Ok sb)
-                )
+                    | _     -> acc
+                ) (Ok sb)
+            )
 
 
     let private processTemplate (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>)
