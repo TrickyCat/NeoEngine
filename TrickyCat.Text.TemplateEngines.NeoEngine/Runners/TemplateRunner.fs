@@ -37,7 +37,7 @@ module TemplateRunner =
 
         | NeoSubstitute s ->
             s 
-            |> sprintf "(() => { try { return ((%s) || '').toString(); } catch (exn) { return ''; }})();" // todo: remove guards
+            |> sprintf "(() => { try { return ((%s) || '').toString(); } catch (exn) { return ''; }})();"
             |> interpreter.Eval
             |> Result.map sb.Append
 

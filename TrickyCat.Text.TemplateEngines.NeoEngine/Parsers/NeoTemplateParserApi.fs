@@ -46,8 +46,6 @@ module NeoTemplateParserApi =
         |> Result.map List.rev
 
 
-    
-
     type private FoldIfsAcc = { output: TemplateNode' list; acc: TemplateNode' list }
 
     let private dropEmptyBlocks template =
