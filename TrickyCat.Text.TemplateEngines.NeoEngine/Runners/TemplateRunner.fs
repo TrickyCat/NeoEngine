@@ -74,10 +74,10 @@ module TemplateRunner =
         |> interpreter.Run
 
 
-    let private initInterpreterEnvironmentWithContextValues (interpreter: IInterpreter) (ctx: KeyValuePair<string, string> seq) =
-        ctx
-        |> Seq.fold (fun (sb: StringBuilder) kvp -> sprintf "var %s = %s;" kvp.Key kvp.Value |> sb.AppendLine) (new StringBuilder())
-        |> (toString >> interpreter.Run)
+    let private initInterpreterEnvironmentWithContextValues (interpreter: IInterpreter) =
+        Seq.fold (fun (sb: StringBuilder) (kvp: KeyValuePair<string, string>) -> sprintf "var %s = %s;" kvp.Key kvp.Value |> sb.AppendLine) (new StringBuilder())
+        >> toString
+        >> interpreter.Run
 
 
     let renderTemplate 
