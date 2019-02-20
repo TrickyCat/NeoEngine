@@ -32,7 +32,7 @@ module TemplateRunner =
                     List.fold (fun acc n ->
                         match acc with
                         | Ok sb -> processTemplateNode (sb, interpreter, includes) n
-                        | _ -> acc
+                        | _     -> acc
                     ) (Ok sb))
 
         | NeoSubstitute s ->
@@ -81,16 +81,16 @@ module TemplateRunner =
 
 
     let renderTemplate 
-        (interpreter: IInterpreter) (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (env: KeyValuePair<string, string> seq)
+        (interpreter: IInterpreter) (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (context: KeyValuePair<string, string> seq)
         (template: Template): Result<string, string> =
         result {
             do! initInterpreterEnvironmentWithGlobals interpreter globals
-            do! initInterpreterEnvironmentWithContextValues interpreter env
+            do! initInterpreterEnvironmentWithContextValues interpreter context
             return! processTemplate (new StringBuilder(), interpreter, includes) template
         }
 
 
-    let renderTemplateWithDefaultInterpreter (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (env: KeyValuePair<string, string> seq)
+    let renderTemplateWithDefaultInterpreter (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (context: KeyValuePair<string, string> seq)
         (template: Template): Result<string, string> =
         use interpreter = new EdgeJsInterpreter() :> IInterpreter
-        renderTemplate interpreter globals includes env template
+        renderTemplate interpreter globals includes context template
