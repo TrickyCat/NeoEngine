@@ -59,39 +59,36 @@ module TemplateRunner =
                                     ) (Ok sb)
                 )
 
-        //| _ -> Ok sb
+
+    let private processTemplate (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>)
+        (template: Template) =
+            template
+            |> List.fold (fun s node ->
+                s |> Result.bind (fun sb -> processTemplateNode (sb, interpreter, includes) node)
+               ) (Ok sb)
+            |> Result.map toString
+
 
     let private initInterpreterEnvironmentWithGlobals (interpreter: IInterpreter) (globals: string seq) =
         S.Join(S.Empty, globals)
         |> interpreter.Run
 
 
-    let private initInterpreterEnvironmentWithContextValues (interpreter: IInterpreter) (env: KeyValuePair<string, string> seq) =
-        env
+    let private initInterpreterEnvironmentWithContextValues (interpreter: IInterpreter) (ctx: KeyValuePair<string, string> seq) =
+        ctx
         |> Seq.fold (fun (sb: StringBuilder) kvp -> sprintf "var %s = %s;" kvp.Key kvp.Value |> sb.AppendLine) (new StringBuilder())
         |> (toString >> interpreter.Run)
 
 
-    let private processTemplateNode' x y =
-        processTemplateNode x y |> ignore
-        x
-
-    let private fst' (x, _, _) = x
-
     let renderTemplate 
         (interpreter: IInterpreter) (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (env: KeyValuePair<string, string> seq)
         (template: Template): Result<string, string> =
-        try
-            let r1 = initInterpreterEnvironmentWithGlobals interpreter globals
-            let r2 = initInterpreterEnvironmentWithContextValues interpreter env
+        result {
+            do! initInterpreterEnvironmentWithGlobals interpreter globals
+            do! initInterpreterEnvironmentWithContextValues interpreter env
+            return! processTemplate (new StringBuilder(), interpreter, includes) template
+        }
 
-            template
-            |> List.fold processTemplateNode' (new StringBuilder(), interpreter, includes)
-            |> fst'
-            |> (fun sb -> sb.ToString())
-            |> Ok
-        with
-        | e -> e |> fullMessage |> Error
 
     let renderTemplateWithDefaultInterpreter (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (env: KeyValuePair<string, string> seq)
         (template: Template): Result<string, string> =
