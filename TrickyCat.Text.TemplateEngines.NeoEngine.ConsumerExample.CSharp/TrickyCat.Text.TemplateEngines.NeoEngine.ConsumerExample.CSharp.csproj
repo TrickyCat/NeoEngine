@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{323F3811-9AA3-4599-BE9F-D5D389488A0A}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>TrickyCat.Text.TemplateEngines.NeoEngine.CSharp.ConsumerExample</RootNamespace>
+    <RootNamespace>TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp</RootNamespace>
     <AssemblyName>runner-cli</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

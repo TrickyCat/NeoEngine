@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace TrickyCat.Text.TemplateEngines.NeoEngine.CSharp.ConsumerExample.CLI
+namespace TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp.CLI
 {
     public class CliOptions
     {

@@ -5,12 +5,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using CommandLine;
-using TrickyCat.Text.TemplateEngines.NeoEngine.CSharp.ConsumerExample.CLI;
-using TrickyCat.Text.TemplateEngines.NeoEngine.Services;
 using Newtonsoft.Json;
+using TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp.CLI;
+using TrickyCat.Text.TemplateEngines.NeoEngine.Services;
 using Unity;
 
-namespace TrickyCat.Text.TemplateEngines.NeoEngine.CSharp.ConsumerExample
+namespace TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp
 {
     class Program
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TrickyCat.Text.TemplateEngines.NeoEngine.CSharp.ConsumerExample
+namespace TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp
 {
     interface IExampleService
     {

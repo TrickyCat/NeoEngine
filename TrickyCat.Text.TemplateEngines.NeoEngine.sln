@@ -7,7 +7,7 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TrickyCat.Text.TemplateEngi
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TrickyCat.Text.TemplateEngines.NeoEngine", "TrickyCat.Text.TemplateEngines.NeoEngine\TrickyCat.Text.TemplateEngines.NeoEngine.fsproj", "{DF9792A5-EE3D-4559-819A-CFE3A2DAE957}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrickyCat.Text.TemplateEngines.NeoEngine.CSharp.ConsumerExample", "TrickyCat.Text.TemplateEngines.NeoEngine.CSharp.ConsumerExample\TrickyCat.Text.TemplateEngines.NeoEngine.CSharp.ConsumerExample.csproj", "{323F3811-9AA3-4599-BE9F-D5D389488A0A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp", "TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp\TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp.csproj", "{323F3811-9AA3-4599-BE9F-D5D389488A0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using TrickyCat.Text.TemplateEngines.NeoEngine.Services;
 
-namespace TrickyCat.Text.TemplateEngines.NeoEngine.CSharp.ConsumerExample
+namespace TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp
 {
     class ExampleService: IExampleService
     {
