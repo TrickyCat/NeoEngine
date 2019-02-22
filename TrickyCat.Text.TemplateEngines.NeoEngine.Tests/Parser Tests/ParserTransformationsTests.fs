@@ -129,10 +129,6 @@ module ``Parser Transformations Tests`` =
         let includeNode = NeoInclude' "smth"
         yield [| [includeNode]; errorTemplateUnexpectedLowNode includeNode |]
         yield [| [Str' "foo"; Neo' "bar"; includeNode]; errorTemplateUnexpectedLowNode includeNode |]
-
-        let includeValue = NeoIncludeValue' "smth"
-        yield [| [includeValue]; errorTemplateUnexpectedLowNode includeValue |]
-        yield [| [Str' "foo"; Neo' "bar"; includeValue]; errorTemplateUnexpectedLowNode includeValue |]
     }
 
 

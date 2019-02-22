@@ -18,8 +18,6 @@ module ParserOptimizationsTests =
 
         yield [| "<%@ include view='' %>"; okEmptyTemplate |]
         yield [| "<%@ include view=\"\" %>"; okEmptyTemplate |]
-        
-        yield [| "<%@ value   %>"; okEmptyTemplate |]
 
         yield [| "<% if(true) { %><% } %>"; okEmptyTemplate |]
         yield [| "<% if(true) { %><% } else { %><% } %>"; okEmptyTemplate |]

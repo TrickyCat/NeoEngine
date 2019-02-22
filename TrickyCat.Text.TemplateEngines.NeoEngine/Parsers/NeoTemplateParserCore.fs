@@ -10,7 +10,6 @@ module NeoTemplateParserCore =
             | NeoSubstitute' of string
 
             | NeoInclude' of string
-            | NeoIncludeValue' of string
             | NeoIncludeView' of string
 
             | BeginOfConditionalTemplate' of condition: string
@@ -25,7 +24,6 @@ module NeoTemplateParserCore =
     let private NeoSubstitute' (s: string)              = s.Trim() |> NeoSubstitute'
     let private BeginOfConditionalTemplate' (s: string) = s.Trim() |> BeginOfConditionalTemplate'
     let private NeoInclude' (s: string)                 = s.Trim() |> NeoInclude'
-    let private NeoIncludeValue' (s: string)            = s.Trim() |> NeoIncludeValue'
     let private NeoIncludeView' (s: string)             = s.Trim() |> NeoIncludeView'
 
     let private maxStrLen = Int32.MaxValue
@@ -87,15 +85,8 @@ module NeoTemplateParserCore =
         .>> str "%>"
         |>> NeoIncludeView'
 
-    let private neoValueParser: Parser<TemplateNode', unit> =
-        str_ws "<%@" 
-        >>. str_ws1 "value" 
-        >>. neoBodyParser
-        |>> NeoIncludeValue'
-
     let internal neoIncludeParser =
         attempt neoIncludeViewParser
-        <|> attempt neoValueParser
         <|> attempt neoGeneralIncludeParser
 
     let internal neoSubstituteParser = str "<%=" >>. neoBodyParser |>> NeoSubstitute'

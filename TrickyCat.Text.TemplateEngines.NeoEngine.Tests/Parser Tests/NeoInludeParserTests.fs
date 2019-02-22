@@ -10,7 +10,6 @@ module ``Neo Inlude Parser Tests`` =
         yield [| "<%@ something  %>"; NeoInclude' "something" |]
         yield [| "<%@something%>"; NeoInclude' "something" |]
 
-        yield [| "<%@ value rest %>"; NeoIncludeValue' "rest" |]
         yield [| "<%@ valuerest %>"; NeoInclude' "valuerest" |]
 
         yield [| "<%@ include view='pdcHash' %>"; NeoIncludeView' "pdcHash" |]

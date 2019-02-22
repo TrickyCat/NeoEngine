@@ -55,7 +55,6 @@ module NeoTemplateParserApi =
             | Neo' ""
             | NeoSubstitute' ""
             | NeoInclude' ""
-            | NeoIncludeValue' ""
             | NeoIncludeView' ""
             | NeoIfElseTemplate' { condition = "" } -> false
             | _                                    -> true
