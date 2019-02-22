@@ -47,9 +47,7 @@ module TemplateRunner =
             |> interpreter.Eval<bool>
             |> Result.map (function
                 | true  -> ifBranchBody
-                | false -> match maybeElseBranchBody with
-                           | None                -> []
-                           | Some elseBranchBody -> elseBranchBody
+                | false -> Option.defaultValue [] maybeElseBranchBody
             )
             |> Result.bind (
                 List.fold (fun acc n ->
