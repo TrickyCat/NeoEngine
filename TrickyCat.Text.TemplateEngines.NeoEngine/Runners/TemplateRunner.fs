@@ -13,7 +13,10 @@ module TemplateRunner =
 
     type private S = System.String
 
-    let rec private processTemplateNode
+    let rec private processTemplate' (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>) =
+             List.fold (fun state node -> state |> Result.bind (fun sb -> processTemplateNode (sb, interpreter, includes) node)) (Ok sb)
+
+    and private processTemplateNode
         (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>) =
         function
         | Str s                   -> s |> sb.Append |> Ok
@@ -28,15 +31,10 @@ module TemplateRunner =
                 viewTemplateString
                 |> runParserOnString
                 |> Result.mapError (sprintf "Parse of include failed.\nInclude: %s.\nError: %s." viewName)
-                |> Result.bind (
-                    List.fold (fun acc n ->
-                        match acc with
-                        | Ok sb -> processTemplateNode (sb, interpreter, includes) n
-                        | _     -> acc
-                    ) (Ok sb))
+                |> Result.bind (processTemplate'(sb, interpreter, includes))
 
         | NeoSubstitute s ->
-            s 
+            s
             |> sprintf "(() => { try { return ((%s) || '').toString(); } catch (exn) { return ''; }})();"
             |> interpreter.Eval
             |> Result.map sb.Append
@@ -49,22 +47,7 @@ module TemplateRunner =
                 | true  -> ifBranchBody
                 | false -> Option.defaultValue [] maybeElseBranchBody
             )
-            |> Result.bind (
-                List.fold (fun acc n ->
-                    match acc with
-                    | Ok sb -> processTemplateNode (sb, interpreter, includes) n
-                    | _     -> acc
-                ) (Ok sb)
-            )
-
-
-    let private processTemplate (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>)
-        (template: Template) =
-            template
-            |> List.fold (fun s node ->
-                s |> Result.bind (fun sb -> processTemplateNode (sb, interpreter, includes) node)
-               ) (Ok sb)
-            |> Result.map toString
+            |> Result.bind (processTemplate'(sb, interpreter, includes))
 
 
     let private initInterpreterEnvironmentWithGlobals (interpreter: IInterpreter) (globals: string seq) =
@@ -76,6 +59,9 @@ module TemplateRunner =
         Seq.fold (fun (sb: StringBuilder) (kvp: KeyValuePair<string, string>) -> sprintf "var %s = %s;" kvp.Key kvp.Value |> sb.AppendLine) (new StringBuilder())
         >> toString
         >> interpreter.Run
+
+
+    let processTemplate x = processTemplate' x >> Result.map toString
 
 
     let renderTemplate 
@@ -90,5 +76,5 @@ module TemplateRunner =
 
     let renderTemplateWithDefaultInterpreter (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (context: KeyValuePair<string, string> seq)
         (template: Template): Result<string, string> =
-        use interpreter = new EdgeJsInterpreter() :> IInterpreter
+        use interpreter = new EdgeJsInterpreter()
         renderTemplate interpreter globals includes context template
