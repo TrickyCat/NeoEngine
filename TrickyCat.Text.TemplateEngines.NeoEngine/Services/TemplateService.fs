@@ -20,4 +20,3 @@ type TemplateService() =
                 template
                 |> runParserOnString
                 >>= renderTemplateWithDefaultInterpreter globals includes context
-

@@ -1,7 +1,10 @@
-﻿// Learn more about F# at http://fsharp.org
-// See the 'F# Tutorial' project for more help.
+﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.FSharp
 
-[<EntryPoint>]
-let main argv = 
-    printfn "%A" argv
-    0 // return an integer exit code
+open TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.FSharp.RenderTemplateExample
+
+module Main =
+
+    [<EntryPoint>]
+    let main _ = 
+        run()
+        0
