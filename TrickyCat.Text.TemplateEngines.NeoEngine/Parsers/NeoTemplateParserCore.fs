@@ -18,6 +18,8 @@ module NeoTemplateParserCore =
 
             | NeoIfElseTemplate' of NeoIfElseTemplate<TemplateNode'>
     and 'node NeoIfElseTemplate = { condition: string; ifBranchBody: 'node list; elseBranchBody: 'node list option }
+    
+    type Template' = TemplateNode' list
 
 
     let private Neo' (s: string)                        = s.Trim() |> Neo'

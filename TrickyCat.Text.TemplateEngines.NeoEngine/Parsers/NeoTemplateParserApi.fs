@@ -15,8 +15,8 @@ module NeoTemplateParserApi =
 
     type Template = TemplateNode list
 
-    let rec internal toTemplate (nodes: TemplateNode' list): Result<TemplateNode list, string> =
-        let rec runner (acc: Result<TemplateNode list, string>) (nodes: TemplateNode' list) =
+    let rec internal toTemplate (nodes: Template'): Result<Template, string> =
+        let rec runner (acc: Result<Template, string>) (nodes: Template') =
             acc
             >>= (fun accList ->
                 match nodes with
@@ -46,8 +46,6 @@ module NeoTemplateParserApi =
         |> Result.map List.rev
 
 
-    type private FoldIfsAcc = { output: TemplateNode' list; acc: TemplateNode' list }
-
     let private dropEmptyBlocks template =
         template
         |> List.filter(function
@@ -71,6 +69,8 @@ module NeoTemplateParserApi =
                 -> NeoIfElseTemplate' { condition = sprintf "!(%s)" c; ifBranchBody = y; elseBranchBody = None }
             | x -> x
             )
+
+    type private FoldIfsAcc = { output: Template'; acc: Template' }
 
     let private foldIfs templates =
         let collapseConditionalBody (res: FoldIfsAcc) (t: TemplateNode') =
