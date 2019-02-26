@@ -15,10 +15,16 @@ module TemplateRunnerHelpers =
         result
         )
 
+    /// Globals which include 'formatDate' function available for references from customization blocks.
     let defaultGlobals = seq {
         yield globalFormatDate.Value
         }
 
+    /// Globals without any content aka empty globals.
     let emptyGlobals  = Seq.empty<string>
+
+    /// Empty includes lookup.
     let emptyIncludes = Map.empty<string, string> :> IReadOnlyDictionary<string, string>
+
+    /// Empty context.
     let emptyContext  = Map.empty<string, string>

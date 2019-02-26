@@ -136,11 +136,17 @@ module NeoTemplateParserApi =
     
     let private fold = dropEmptyBlocks >> foldIfs >> dropEmptyIfBranchBody
 
-    let templateParser = 
+    /// <summary>
+    /// The main parser being used for parsing of template.
+    /// </summary>
+    let templateParser: Parser<Result<Template, string>, unit> = 
         many((attempt neoParser) <|> (notEmpty (strBeforeNeoCustomizationParser <|> strBeforeEos)))
         .>> eof
         |>> (fold >> toTemplate)
 
+    /// <summary>
+    /// Runs the <see cref="TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi.templateParser" /> on specified string
+    /// </summary>
     let runParserOnString string : Result<Template, string> =
         match run templateParser string with
         | Success(result, _, _)   -> result
