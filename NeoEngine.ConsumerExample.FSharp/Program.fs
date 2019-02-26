@@ -1,10 +1,12 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.FSharp
 
-open TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.FSharp.RenderTemplateExample
+open System
 
 module Main =
 
     [<EntryPoint>]
     let main _ = 
-        run()
+        EventsQueue.startQ()
+        SimpleEventsProcessor.startProcessor()
+        Console.ReadLine() |> ignore
         0

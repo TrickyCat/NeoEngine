@@ -46,7 +46,12 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="RenderTemplateExample.fs" />
+    <Compile Include="Common.fs" />
+    <Compile Include="GreetOnSite.fs" />
+    <Compile Include="PasswordReset.fs" />
+    <Compile Include="EventsQueue.fs" />
+    <Compile Include="FakeEmailSender.fs" />
+    <Compile Include="SimpleEventsProcessor.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />

@@ -2,6 +2,7 @@
 
 open System.Reflection
 open System.IO
+open System.Collections.Generic
 
 module TemplateRunnerHelpers =
 
@@ -17,3 +18,7 @@ module TemplateRunnerHelpers =
     let defaultGlobals = seq {
         yield globalFormatDate.Value
         }
+
+    let emptyGlobals  = Seq.empty<string>
+    let emptyIncludes = Map.empty<string, string> :> IReadOnlyDictionary<string, string>
+    let emptyContext  = Map.empty<string, string>

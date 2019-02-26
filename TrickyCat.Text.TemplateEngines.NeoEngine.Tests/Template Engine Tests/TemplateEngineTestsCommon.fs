@@ -3,15 +3,10 @@
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunner
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi
 open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
-open System.Collections.Generic
 open FsUnitTyped
 open System
 
 module ``Template Engine Tests Common`` = 
-    let emptyContext  = Map.empty<string, string>
-    let emptyIncludes = Map.empty<string, string> :> IReadOnlyDictionary<string, string>
-    let emptyGlobals  = Seq.empty<string>
-
     let renderTemplate globals includes context templateString =
             templateString
             |> runParserOnString

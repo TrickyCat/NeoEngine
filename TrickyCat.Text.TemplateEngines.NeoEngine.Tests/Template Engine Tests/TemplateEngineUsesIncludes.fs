@@ -3,6 +3,7 @@
 open ``Template Engine Tests Common``
 open FsUnitTyped
 open NUnit.Framework
+open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunnerHelpers
 
 module ``Template Engine Uses Includes`` =
 
