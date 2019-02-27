@@ -1,8 +1,41 @@
+/**
+ * Formats a date as a string.
+ * 
+ * @param {Date} date JavaScript Date instance.
+ * @param {string} format A string which defines expected result by using format specifiers.
+ * The characters used to format the different parts of the date are the following:
+ * 	Y - Year 
+ * 	M - Month of the year (1-12) 
+ * 	B - Month name (in English)
+ * 	D - Day of the month (1-31) 
+ * 	A - Day name (in English)
+ * 	J - Day of the year (1-366) 
+ * 	W - Week of the year 
+ * 	H - Hour (0-23) 
+ * 	I - Hour (1-12) 
+ * 	N - Minutes (0-59) 
+ * 	S - Seconds (0-59) 
+ * 	P - AM/PM 
+ * 
+ * You can specify a number in front of certain of these characters (Y, M, D, J, W, H, I, N, S)
+ * to limit the output length. If the specified target length is greater the string representation of
+ * a value then it will prepended with zeroes.
+ * 
+ * The A and B characters can be followed by a l (lowercase L) to use the full name rather than the shortened version.
+ * 
+ * @returns {string} A copy of format string in which all format specifiers are procesed and replaced with their string representation
+ * (aka A character string representing the date in the requested format).
+ * 
+ * @example
+ * formatDate (date, format)
+ * formatDate (new Date(), '%4Y')
+ */
 const formatDate = (() => {
     const shortDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const longDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const longMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const oneDay = 1000 * 60 * 60 * 24;
 
     const pad = (dataString, length, padString = "0") => {
         const padLength = Math.abs(length - dataString.length);
@@ -11,8 +44,7 @@ const formatDate = (() => {
 
     const dayOfYear = date => {
         const start = new Date(date.getFullYear(), 0, 0);
-        const diff = (date - start) + ((start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);
-        const oneDay = 1000 * 60 * 60 * 24;
+        const diff = (date - start) + ((start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);        
         const day = Math.floor(diff / oneDay);
         return day;
     };
@@ -150,12 +182,12 @@ const formatDate = (() => {
         },
         {
             tag: 'A - Day name',
-            regEx: /%A([il]?)/,
+            regEx: /%A([l]?)/,
             handle: function(date, str) { return handler(A, this.regEx, execRes => [execRes[1] !== undefined ? execRes[1] === 'l' : undefined], date, str); }
         },
         {
             tag: 'B - Month name',
-            regEx: /%B([il]?)/,
+            regEx: /%B([l]?)/,
             handle: function(date, str) { return handler(B, this.regEx, execRes => [execRes[1] !== undefined ? execRes[1] === 'l' : undefined], date, str); }
         }
     ];
