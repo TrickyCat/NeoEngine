@@ -79,7 +79,7 @@ module NeoTemplateParserApi =
     /// Groups low level AST nodes from linear sequence into hierarchical one according to semantics of
     /// IF conditional rendering feature.
     /// </summary>
-    let private foldIfs templates =
+    let private foldIfs templates: Result<Template', string> =
         let collapseConditionalBody (res: FoldIfsAcc) (t: TemplateNode') =
             let accLength = res.acc |> List.length
             let closestIfIdx = 
@@ -139,9 +139,12 @@ module NeoTemplateParserApi =
             ) { output = []; acc = [] }
 
         assert (List.isEmpty acc)
-        List.rev folded
+        folded |> List.rev |> Result.Ok
     
-    let private fold = dropEmptyBlocks >> foldIfs >> dropEmptyIfBranchBody
+    let private fold =
+        dropEmptyBlocks
+        >> foldIfs
+        >> Result.map dropEmptyIfBranchBody
 
     /// <summary>
     /// The main parser being used for parsing of template.
@@ -149,7 +152,7 @@ module NeoTemplateParserApi =
     let templateParser: Parser<Result<Template, string>, unit> = 
         many((attempt neoParser) <|> (notEmpty (strBeforeNeoCustomizationParser <|> strBeforeEos)))
         .>> eof
-        |>> (fold >> toTemplate)
+        |>> (fold >> Result.bind toTemplate)
 
     /// <summary>
     /// Runs the <see cref="TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi.templateParser" /> on specified string
