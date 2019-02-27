@@ -15,6 +15,9 @@ module NeoTemplateParserApi =
 
     type Template = TemplateNode list
 
+    /// <summary>
+    /// Transforms low level AST to higher level one.
+    /// </summary>
     let rec internal toTemplate (nodes: Template'): Result<Template, string> =
         let rec runner (acc: Result<Template, string>) (nodes: Template') =
             acc
@@ -72,6 +75,10 @@ module NeoTemplateParserApi =
 
     type private FoldIfsAcc = { output: Template'; acc: Template' }
 
+    /// <summary>
+    /// Groups low level AST nodes from linear sequence into hierarchical one according to semantics of
+    /// IF conditional rendering feature.
+    /// </summary>
     let private foldIfs templates =
         let collapseConditionalBody (res: FoldIfsAcc) (t: TemplateNode') =
             let accLength = res.acc |> List.length
