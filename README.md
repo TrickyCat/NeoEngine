@@ -28,3 +28,10 @@ Proudly built with F#.
 * **includes** - a lookup dictionary for resolution of includes being referenced from the template. Syntactically they are also templates.
 * **context** data - conceptually it must be the only varying part during multiple invocations of the engine for rendering the same template. It's a dictionary of named values (similar to JSON objects) available for lookup from the template or include.
 * **template** - a string which alongside the string literals may or may not contain some customization blocks
+
+## Third-Party Software
+
+The engine relies on:
+* [**EdgeJS** NuGet package](https://www.nuget.org/packages/EdgeJs/) for execution of JS code inside customization blocks
+* [**FParsec** NuGet package](https://www.nuget.org/packages/FParsec/) for parsing functionality
+* other libraries
