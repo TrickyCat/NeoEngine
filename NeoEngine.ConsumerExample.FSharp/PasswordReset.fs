@@ -6,7 +6,7 @@ open Common
 
 module PasswordReset =
 
-    let template = "
+    let private template = "
 <html>
 <title>
     Dear user your password was reset.

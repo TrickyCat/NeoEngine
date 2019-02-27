@@ -8,7 +8,7 @@
     <ProjectGuid>b8b9caff-c986-4283-bc79-8db399436cae</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>FSharp</RootNamespace>
-    <AssemblyName>FSharp</AssemblyName>
+    <AssemblyName>NeoEngine.ConsumerExample.FSharp</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <UseStandardResourceNames>true</UseStandardResourceNames>
