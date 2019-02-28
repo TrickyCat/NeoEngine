@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using CommandLine;
@@ -14,86 +13,10 @@ namespace TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp
 {
     class Program
     {
-        static void Main(string[] args)
-        {
-            var container = ConfigureContainer(new UnityContainer());
-            var svc = container.Resolve<IExampleService>();
-
-            TestCli(svc, args);
-            //MemoryTest(svc);
-            //PasswordResetPerfTest(svc);
-            Console.ReadLine();
-        }
-
-        static void MemoryTest(IExampleService svc)
-        {
-            var templateFileName =     "PasswordReset.html";
-            var templateFilePath =   $@"c:\Neo\Templates\PasswordReset\{templateFileName}";
-            var contextDataFilePath = @"c:\Neo\test.tmpl.data";
-            var includesFolderPath =  @"c:\Neo\Includes";
-            var globalsFolderPath =   @"c:\Neo\Global Scope";
-
-            var template = GetTemplate(templateFilePath);
-            var globals = GetGlobalsFromFolder(globalsFolderPath);
-            var includes = GetIncludesFromFolder(includesFolderPath);
-            var context = GetContextData(contextDataFilePath);
-
-            #region Warm Up
-
-            Console.WriteLine("About to warm up.");
-            Console.ReadLine();
-            Console.WriteLine("Warming up...");
-            for (int i = 0; i < 1000; i++)
-            {
-                RunRenderJob(svc, template, globals, includes, context, noConsole: true);
-            }
-            Console.WriteLine("Warmed up.");
-
-            #endregion
-
-            #region Run
-
-            var n = 100_000_000_000L;
-            Console.WriteLine($"About to run {n} times.");
-            Console.ReadLine();
-            Console.WriteLine("Running...");
-            for (var i = 0L; i < n; i++)
-            {
-                RunRenderJob(svc, template, globals, includes, context, noConsole: true);
-            }
-            Console.WriteLine("Run.");
-
-            #endregion
-
-            Console.ReadLine();
-        }
-
-        static void PasswordResetPerfTest(IExampleService svc, int qtyOfRenderings = 1000)
-        {
-            var templateFileName =     "PasswordReset.html";
-            var templateFilePath =   $@"c:\Neo\Templates\PasswordReset\{templateFileName}";
-            var contextDataFilePath = @"c:\Neo\test.tmpl.data";
-            var includesFolderPath =  @"c:\Neo\Includes";
-            var globalsFolderPath =   @"c:\Neo\Global Scope";
-
-            var template = GetTemplate(templateFilePath);
-            var globals = GetGlobalsFromFolder(globalsFolderPath);
-            var includes = GetIncludesFromFolder(includesFolderPath);
-            var context = GetContextData(contextDataFilePath);
-
-            var sw = new Stopwatch();
-            sw.Start();
-            for (var i = 0; i < qtyOfRenderings; i++)
-            {
-                RunRenderJob(svc, template, globals, includes, context, noConsole: true);
-            }
-            sw.Stop();
-            var ms = (double) sw.ElapsedMilliseconds;
-            Console.WriteLine($@"Rendered [{templateFileName}] {qtyOfRenderings} times.
-Execution time:
-Overall     : {ms} ms
-Per template: {ms / qtyOfRenderings} ms");
-        }
+        static void Main(string[] args) =>
+            TestCli(
+                ConfigureContainer(new UnityContainer()).Resolve<IExampleService>(),
+                args);
 
         static IUnityContainer ConfigureContainer(IUnityContainer container) =>
             container
@@ -106,80 +29,69 @@ Per template: {ms / qtyOfRenderings} ms");
                 .ParseArguments<CliOptions>(args)
                 .WithParsed(o =>
                 {
-                    TestTemplateFile(svc, o.TemplateFilePath, o.ContextDataFilePath, o.IncludesFolderPath, o.GlobalsFolderPath, o.RenderedOutputFilePath);
+                    TestTemplateFile(svc, o.TemplateFilePath, o.ContextDataFilePath, o.IncludesFolderPath,
+                        o.GlobalsFolderPath, o.RenderedOutputFilePath, o.SuppressOutputToConsole);
                 });
 
-        static void TestTemplateString(IExampleService svc)
+        static (bool, IEnumerable<KeyValuePair<string, string>>) GetContextDataFromFile(string contextFilePath)
         {
-            var template = @"
-    <html>
-<%
-function myFunc(x) { return x * 100 + 23; }
-%>
-        <head>
-            <title>
-                <%= myFunc(1) + ' some string ' + myTitle + '_ADDED' %>
-                And another instance of the title: <%= myTitle %>
-            </title>
-        </head>
-
-        <body>
-        <p>
-            <% if (2 > 1) { %>
-            Hello, <%= name %>!
-            <% } else { %>
-            FALSE
-            <% } %>
-        </p>
-        <p>
-            Some text: 報酬アップ
-        </p>
-        <p>
-            Some other text 
-        </p>
-        </body>
-    <html>
-    ";
-            var includes = new Dictionary<string, string>();
-            var globals = new ReadOnlyCollection<string>(new List<string>());
-            var context = new Dictionary<string, string>()
+            if (!File.Exists(contextFilePath))
             {
-                {"myTitle", "Some awesome title with funky characters 報酬アップ and other chars तकनिकल"},
-                {"name", "Bobby तकनिकल Doe"}
-            };
-
-            RunRenderJob(svc, template, globals, includes, context);
+                return (false, Enumerable.Empty<KeyValuePair<string, string>>());
+            }
+            try
+            {
+                var contextJson = File.ReadAllText(contextFilePath);
+                var context = JsonConvert.DeserializeObject<Dictionary<string, object>>(contextJson)
+                    .ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value is string
+                                ? $"'{kvp.Value}'"
+                                : (kvp.Value is bool
+                                    ? kvp.Value.ToString().ToLowerInvariant()
+                                    : kvp.Value.ToString())
+                    );
+                return (true, context);
+            }
+            catch (Exception)
+            {
+                return (false, Enumerable.Empty<KeyValuePair<string, string>>());
+            }
         }
 
-        static IEnumerable<KeyValuePair<string, string>> GetContextData(string contextFilePath)
+        static (bool, string) GetTemplate(string templateFilePath)
         {
-            var contextJson = File.ReadAllText(contextFilePath);
-            var context = JsonConvert.DeserializeObject<Dictionary<string, object>>(contextJson)
-                .ToDictionary(
-                    kvp => kvp.Key,
-                    kvp => kvp.Value is string
-                            ? $"'{kvp.Value}'"
-                            : (kvp.Value is bool
-                                ? kvp.Value.ToString().ToLowerInvariant()
-                                : kvp.Value.ToString())
-                );
-            return context;
+            try
+            {
+                return File.Exists(templateFilePath)
+                        ? (true, File.ReadAllText(templateFilePath))
+                        : (false, string.Empty);
+            }
+            catch (Exception)
+            {
+                return (false, "");
+            }
         }
-
-        static string GetTemplate(string templateFilePath) =>
-            File.Exists(templateFilePath)
-                ? File.ReadAllText(templateFilePath)
-                : string.Empty;
 
         static void TestTemplateFile(IExampleService svc, string templateFilePath, string contextFilePath, string includesFolderPath, 
-            string globalFolderPath, string renderedOutputFilePath)
+            string globalFolderPath, string renderedOutputFilePath, bool suppressResultToConsole)
         {
-            var template = GetTemplate(templateFilePath);
-            var context = GetContextData(contextFilePath);
+            var (templateOk, template) = GetTemplate(templateFilePath);
+            if (!templateOk)
+            {
+                Console.WriteLine($"Template was not found at location: {templateFilePath}.");
+                return;
+            }
+            var (contextOk, context) = GetContextDataFromFile(contextFilePath);
+            if (!contextOk)
+            {
+                Console.WriteLine($"Problem with context data file at location: {contextFilePath}.");
+                return;
+            }
             var includes = GetIncludesFromFolder(includesFolderPath);
             var globals = GetGlobalsFromFolder(globalFolderPath);
 
-            var renderResult = RunRenderJob(svc, template, globals, includes, context);
+            var renderResult = RunRenderJob(svc, template, globals, includes, context, suppressResultToConsole);
 
             if (!string.IsNullOrWhiteSpace(renderedOutputFilePath))
             {
@@ -219,10 +131,11 @@ function myFunc(x) { return x * 100 + 23; }
             return new ReadOnlyCollection<string>(globals);
         }
 
-        static string RunRenderJob(IExampleService svc, string template, IEnumerable<string> globals, IReadOnlyDictionary<string, string> includes, IEnumerable<KeyValuePair<string, string>> context, bool noConsole = false)
+        static string RunRenderJob(IExampleService svc, string template, IEnumerable<string> globals, IReadOnlyDictionary<string, string> includes,
+            IEnumerable<KeyValuePair<string, string>> context, bool suppressResultToConsole)
         {
             var renderResult = svc.RenderTemplate(template, globals, includes, context);
-            if (!noConsole && renderResult != string.Empty)
+            if (!suppressResultToConsole && renderResult != string.Empty)
             {
                 Console.WriteLine($"Render result:{Environment.NewLine}{renderResult}");
             }

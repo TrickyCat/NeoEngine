@@ -20,5 +20,8 @@ namespace TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp.CLI
 
         [Option('o', "output", Required = false, HelpText = "Set path to file with render result.")]
         public string RenderedOutputFilePath { get; set; }
+
+        [Option('s', "no-console-result", Required = false, HelpText = "Suppress output of rendering result to the console.")]
+        public bool SuppressOutputToConsole { get; set; }
     }
 }

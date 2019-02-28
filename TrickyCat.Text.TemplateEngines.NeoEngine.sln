@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.329
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28621.142
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TrickyCat.Text.TemplateEngines.NeoEngine.Tests", "TrickyCat.Text.TemplateEngines.NeoEngine.Tests\TrickyCat.Text.TemplateEngines.NeoEngine.Tests.fsproj", "{055B98A7-E69C-40BF-8F7F-A9E7B03C68C4}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoEngine.ConsumerExample.CSharp", "NeoEngine.ConsumerExample.CSharp\NeoEngine.ConsumerExample.CSharp.csproj", "{323F3811-9AA3-4599-BE9F-D5D389488A0A}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NeoEngine.ConsumerExample.FSharp", "NeoEngine.ConsumerExample.FSharp\NeoEngine.ConsumerExample.FSharp.fsproj", "{B8B9CAFF-C986-4283-BC79-8DB399436CAE}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NeoEngine.CliRunner", "NeoEngine.CliRunner\NeoEngine.CliRunner.fsproj", "{7D73C0E8-B1E2-4FF9-8D03-0FD799F8E695}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{B8B9CAFF-C986-4283-BC79-8DB399436CAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8B9CAFF-C986-4283-BC79-8DB399436CAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8B9CAFF-C986-4283-BC79-8DB399436CAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D73C0E8-B1E2-4FF9-8D03-0FD799F8E695}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D73C0E8-B1E2-4FF9-8D03-0FD799F8E695}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D73C0E8-B1E2-4FF9-8D03-0FD799F8E695}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D73C0E8-B1E2-4FF9-8D03-0FD799F8E695}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
