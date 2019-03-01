@@ -23,6 +23,7 @@ namespace TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp
                 .RegisterType<ITemplateService, TemplateService>()
                 .RegisterType<IExampleService, ExampleService>();
 
+        // ok
         static void TestCli(IExampleService svc, string[] args) =>
             Parser
                 .Default
@@ -33,6 +34,7 @@ namespace TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp
                         o.GlobalsFolderPath, o.RenderedOutputFilePath, o.SuppressOutputToConsole);
                 });
 
+        // ok
         static (bool, IEnumerable<KeyValuePair<string, string>>) GetContextDataFromFile(string contextFilePath)
         {
             if (!File.Exists(contextFilePath))
@@ -59,6 +61,7 @@ namespace TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp
             }
         }
 
+        // ok
         static (bool, string) GetTemplate(string templateFilePath)
         {
             try
@@ -99,6 +102,7 @@ namespace TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp
             }
         }
 
+        // ok
         static IReadOnlyDictionary<string, string> GetIncludesFromFolder(string includesFolderPath)
         {
             if (!Directory.Exists(includesFolderPath))
@@ -117,6 +121,7 @@ namespace TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.CSharp
             return new ReadOnlyDictionary<string, string>(dict);
         }
 
+        // ok
         static IEnumerable<string> GetGlobalsFromFolder(string globalsFolderPath)
         {
             if (!Directory.Exists(globalsFolderPath))

@@ -21,4 +21,4 @@ type CliOptions () =
     member val RenderedOutputFilePath = Unchecked.defaultof<string> with get, set
 
     [<Option('s', "no-console-result", Required = false, HelpText = "Suppress output of rendering result to the console.")>]
-    member val SuppressOutputToConsole = Unchecked.defaultof<string> with get, set
+    member val SuppressOutputToConsole = Unchecked.defaultof<bool> with get, set

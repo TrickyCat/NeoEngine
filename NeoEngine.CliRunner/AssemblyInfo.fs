@@ -12,7 +12,7 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyConfiguration("")>]
 [<assembly: AssemblyCompany("")>]
 [<assembly: AssemblyProduct("NeoEngine.CliRunner")>]
-[<assembly: AssemblyCopyright("Copyright ©  2019")>]
+[<assembly: AssemblyCopyright("Copyright © Dmytro Doroshenko 2019")>]
 [<assembly: AssemblyTrademark("")>]
 [<assembly: AssemblyCulture("")>]
 
