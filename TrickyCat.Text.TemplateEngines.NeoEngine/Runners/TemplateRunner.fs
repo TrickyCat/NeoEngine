@@ -56,7 +56,7 @@ module TemplateRunner =
     /// Initialize the script execution environment inside interpreter session with with specified globals.
     /// </summary>
     let private initInterpreterEnvironmentWithGlobals (interpreter: IInterpreter) (globals: string seq) =
-        S.Join(S.Empty, globals)
+        S.Join(";\n", globals)
         |> interpreter.Run
 
     /// <summary>
