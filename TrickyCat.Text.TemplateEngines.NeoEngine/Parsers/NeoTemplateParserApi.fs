@@ -79,22 +79,24 @@ module NeoTemplateParserApi =
     /// Groups low level AST nodes from linear sequence into hierarchical one according to semantics of
     /// IF conditional rendering feature.
     /// </summary>
-    let private foldIfs templates: Result<Template', string> =
-        let collapseConditionalBody (res: FoldIfsAcc) (t: TemplateNode') =
+    let private foldIfs templates: Result<Template', string> = result {
+        let ok = Result.Ok
+        let error = Result.Error
+
+        let collapseConditionalBody (res: FoldIfsAcc): Result<FoldIfsAcc, string> = result {
             let accLength = res.acc |> List.length
-            let closestIfIdx = 
+            let! closestIfIdx = 
                 match List.tryFindIndex (function BeginOfConditionalTemplate' _ -> true | _ -> false) res.acc with
-                | Some n -> n
-                | None   -> failwith "No matching opening IF for closing tag: <% } %>"
+                | Some n -> ok n
+                | None   -> error "No matching opening IF for closing tag: <% } %>"
 
             let closestElseIdx = 
-                match List.tryFindIndex (function ElseBranchOfConditionalTemplateDelimiter' -> true | _ -> false) res.acc with
-                | Some n -> n
-                | None   -> Int32.MaxValue
+                List.tryFindIndex (function ElseBranchOfConditionalTemplateDelimiter' -> true | _ -> false) res.acc
+                |> Option.defaultValue Int32.MaxValue
 
             let qtyOfElementsToClosestIf = closestIfIdx + 1
 
-            let ifElseNode = 
+            let! ifElseNode = 
                 if closestElseIdx < closestIfIdx then
                     let elseBranchContentRaw = List.rev (List.take closestElseIdx res.acc)
                     let elseBranchContent = if List.isEmpty elseBranchContentRaw then None else Some elseBranchContentRaw
@@ -107,39 +109,47 @@ module NeoTemplateParserApi =
 
                     match listChunk with
                     |(BeginOfConditionalTemplate' condition) :: ifBranchContent ->
-                        NeoIfElseTemplate' { condition = condition; ifBranchBody = ifBranchContent; elseBranchBody = elseBranchContent }
+                        ok <| NeoIfElseTemplate' { condition = condition; ifBranchBody = ifBranchContent; elseBranchBody = elseBranchContent }
                     | _                                                         ->
-                        failwith "Empty list OR its head isn't BeginOfConditionalTemplate"
+                        error "No BeginOfConditionalTemplate node found."
                 else
                     match List.rev(List.take qtyOfElementsToClosestIf res.acc) with
                     |(BeginOfConditionalTemplate' condition) :: rest ->
-                        NeoIfElseTemplate' { condition = condition; ifBranchBody = rest; elseBranchBody = None }
+                        ok <| NeoIfElseTemplate' { condition = condition; ifBranchBody = rest; elseBranchBody = None }
                     | _                                              ->
-                        failwith "Empty list: List.rev(List.take qtyOfElementsToClosestIf res.acc)\nOR\nFirst element is not BeginOfConditionalTemplate"
+                        error "No BeginOfConditionalTemplate node found."
 
-            if accLength > qtyOfElementsToClosestIf then
-                { res with acc = ifElseNode :: (List.skip qtyOfElementsToClosestIf res.acc) }
-            else
-                { output = ifElseNode :: res.output; acc = List.skip qtyOfElementsToClosestIf res.acc }
+            return!
+                if accLength > qtyOfElementsToClosestIf then
+                    ok { res with acc = ifElseNode :: (List.skip qtyOfElementsToClosestIf res.acc) }
+                else
+                    ok { output = ifElseNode :: res.output; acc = List.skip qtyOfElementsToClosestIf res.acc }
+            }
 
-
-        let { output = folded; acc = acc } =
+        let! { output = folded; acc = acc } =
             templates
-            |> List.fold (fun res t ->
-                match t, res with 
-                | BeginOfConditionalTemplate' _, { acc = [] }  -> { res with acc = [t] }
-                | BeginOfConditionalTemplate' _, _             -> { res with acc = t :: res.acc }
-                | Str' _, { acc = [] }                         -> { res with output = t :: res.output }
-                | Str' _, _                                    -> { res with acc = t :: res.acc }
-                | EndOfConditionalTemplate', { acc = [] }      -> failwith "Not supported: Unexpected end of conditional template."
-                | EndOfConditionalTemplate', _                 -> collapseConditionalBody res t
-                | ElseBranchOfConditionalTemplateDelimiter', _ -> { res with acc = t :: res.acc }
-                | _, { acc = [] }                              -> { res with output = t :: res.output }
-                | _, _                                         -> { res with acc = t :: res.acc }
-            ) { output = []; acc = [] }
+            |> List.fold (fun (res: Result<FoldIfsAcc, string>) node ->
+                res
+                >>= (fun ({acc = acc; output = output} as resRec) ->
+                    match node, acc with 
+                    | BeginOfConditionalTemplate' _, []            -> ok { resRec with acc = [node] }
+                    | BeginOfConditionalTemplate' _, _             -> ok { resRec with acc = node :: acc }
+                    | Str' _, []                                   -> ok { resRec with output = node :: output }
+                    | Str' _, _                                    -> ok { resRec with acc = node :: acc }
+                    | EndOfConditionalTemplate', []                -> error "Not supported: Unexpected end of conditional template."
+                    | EndOfConditionalTemplate', _                 -> collapseConditionalBody resRec
+                    | ElseBranchOfConditionalTemplateDelimiter', _ -> ok { resRec with acc = node :: acc }
+                    | _, []                                        -> ok { resRec with output = node :: output }
+                    | _, _                                         -> ok { resRec with acc = node :: acc }
+                )
+            ) (ok { output = []; acc = [] })
 
-        assert (List.isEmpty acc)
-        folded |> List.rev |> Result.Ok
+        return!
+            if List.isEmpty acc then
+                folded |> List.rev |> Result.Ok
+            else
+                error "Not all nodes were processed during collapsing of AST blocks."
+    }
     
     let private fold =
         dropEmptyBlocks
