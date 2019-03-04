@@ -64,25 +64,31 @@
     <None Include="App.config" />
     <Content Include="packages.config" />
     <None Include="DevHelpers.fsx" />
-    <None Include="edge\x86\node.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="edge\x86\edge_nativeclr.node">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="edge\x64\node.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="edge\x64\edge_nativeclr.node">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Content Include="edge\edge.js">
+    <EmbeddedResource Include="JS\Global Scope\formatDate.js" />    
+    <Content Include="..\packages\EdgeJs.9.3.4\content\edge\double_edge.js">
+      <Link>edge\double_edge.js</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="edge\double_edge.js">
+    <Content Include="..\packages\EdgeJs.9.3.4\content\edge\edge.js">
+      <Link>edge\edge.js</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="JS\Global Scope\formatDate.js" />
+    <Content Include="..\packages\EdgeJs.9.3.4\content\edge\x86\edge_nativeclr.node">
+      <Link>edge\x86\edge_nativeclr.node</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\packages\EdgeJs.9.3.4\content\edge\x86\node.dll">
+      <Link>edge\x86\node.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\packages\EdgeJs.9.3.4\content\edge\x64\edge_nativeclr.node">
+      <Link>edge\x64\edge_nativeclr.node</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\packages\EdgeJs.9.3.4\content\edge\x64\node.dll">
+      <Link>edge\x64\node.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="EdgeJs">
@@ -105,9 +111,6 @@
       <Private>True</Private>
     </Reference>
   </ItemGroup>
-  <PropertyGroup>
-    <PreBuildEvent>xcopy "$(SolutionDir)packages\EdgeJs.9.3.4\content" "$(ProjectDir)" /E /Y</PreBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
