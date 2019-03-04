@@ -4,6 +4,7 @@ open CommandLine
 open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
 open IoHelpers
 open TrickyCat.Text.TemplateEngines.NeoEngine.Services
+open System
 
 module Main = 
 
@@ -26,9 +27,15 @@ module Main =
         do! writeAllTextToFile options.RenderedOutputFilePath renderResult
         }
 
+    let printError error =
+        let color = Console.ForegroundColor
+        Console.ForegroundColor <- ConsoleColor.Red
+        printfn "Error%s%s" nl error
+        Console.ForegroundColor <- color
+
 
     let outputErrors (result: Result<_, string>) =
-        result |> Result.mapError (printfn "%s") |> ignore
+        result |> Result.mapError printError |> ignore
 
 
     let runCli argv =
