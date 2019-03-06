@@ -57,6 +57,7 @@
     <Compile Include="Parsers\NeoTemplateParserApi.fs" />
     <Compile Include="Interpreters\InterpreterBase.fs" />
     <Compile Include="Interpreters\EdgeJsInterpreter.fs" />
+    <Compile Include="Runners\RunnerErrors.fs" />
     <Compile Include="Runners\TemplateRunner.fs" />
     <Compile Include="Runners\TemplateRunnerHelpers.fs" />
     <Compile Include="Services\TemplateService.fs" />
@@ -64,7 +65,7 @@
     <None Include="App.config" />
     <Content Include="packages.config" />
     <None Include="DevHelpers.fsx" />
-    <EmbeddedResource Include="JS\Global Scope\formatDate.js" />    
+    <EmbeddedResource Include="JS\Global Scope\formatDate.js" />
     <Content Include="..\packages\EdgeJs.9.3.4\content\edge\double_edge.js">
       <Link>edge\double_edge.js</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

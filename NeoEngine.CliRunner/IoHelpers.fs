@@ -1,14 +1,11 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.CliRunner
 
 open Newtonsoft.Json
-open System
 open System.Collections.Generic
 open System.IO
 open TrickyCat.Text.TemplateEngines.NeoEngine.Common
 
 module IoHelpers =
-
-    let nl = Environment.NewLine
 
     let getTemplateFromFile (templateFilePath: string) : Result<string, string> =
         if File.Exists templateFilePath then

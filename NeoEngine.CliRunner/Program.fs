@@ -6,6 +6,7 @@ open IoHelpers
 open TrickyCat.Text.TemplateEngines.NeoEngine.Services
 open System
 open System.Diagnostics
+open TrickyCat.Text.TemplateEngines.NeoEngine.Common
 
 module Main = 
 
@@ -31,7 +32,7 @@ module Main =
             printfn "Render result:%s%s%s" nl nl content
 
 
-    let private runOnFiles (options: CliOptions): Result<unit, string> = result {
+    let private runOnFiles (options: CliOptions) : Result<unit, string> = result {
         let! template = getTemplateFromFile options.TemplateFilePath
         let! context = getContextDataFromFile options.ContextDataFilePath
         let! includes = getIncludesFromFolder options.IncludesFolderPath
@@ -39,17 +40,18 @@ module Main =
 
         let timedResult = timed renderSvc.RenderTemplateString globals includes template context
         logDuration timedResult.duration
-        let! result = timedResult.result
+        let! result = timedResult.result |> Result.mapError toString
 
         writeToConsole options.SuppressOutputToConsole result
         do! writeAllTextToFile options.RenderedOutputFilePath result
+        return ()
         }
 
 
     let private printError error =
         let color = Console.ForegroundColor
         Console.ForegroundColor <- ConsoleColor.Red
-        printfn "Error%s%s" nl error
+        printfn "%s%s" nl error
         Console.ForegroundColor <- color
 
 

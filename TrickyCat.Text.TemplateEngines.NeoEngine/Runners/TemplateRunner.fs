@@ -8,13 +8,16 @@ open TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters.InterpreterBase
 open TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters.EdgeJsInterpreter
 open System.Text
 open System.Collections.Generic
+open RunnerErrors
 
 module TemplateRunner =
 
     type private S = System.String
 
     let rec private processTemplate' (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>) =
-             List.fold (fun state node -> state |> Result.bind (fun sb -> processTemplateNode (sb, interpreter, includes) node)) (Ok sb)
+             List.fold
+               (fun state node -> state |> Result.bind (fun sb -> processTemplateNode (sb, interpreter, includes) node))
+               (Ok sb)
 
     /// <summary>
     /// Handles execution of nodes from template's AST.
@@ -70,6 +73,12 @@ module TemplateRunner =
 
     let private processTemplate x = processTemplate' x >> Result.map toString
 
+    let private renderTemplate' interpreter globals includes context template : Result<string, string> =
+        result {
+            do! initInterpreterEnvironmentWithGlobals interpreter globals
+            do! initInterpreterEnvironmentWithContextValues interpreter context
+            return! processTemplate (new StringBuilder(), interpreter, includes) template
+        }
 
     /// <summary>
     /// Renders a template in environment specified by globals with provided includes lookup and context data.
@@ -94,16 +103,13 @@ module TemplateRunner =
     /// <param name="template">
     /// Template's AST.
     /// </param>
-    /// <returns>Result value with rendered template string in case of success or with the error string in case of failure.</returns>
+    /// <returns>Result value with rendered template string in case of success or with the error in case of failure.</returns>
     /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,System.String}"/>
     let renderTemplate 
         (interpreter: IInterpreter) (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (context: KeyValuePair<string, string> seq)
-        (template: Template): Result<string, string> =
-        result {
-            do! initInterpreterEnvironmentWithGlobals interpreter globals
-            do! initInterpreterEnvironmentWithContextValues interpreter context
-            return! processTemplate (new StringBuilder(), interpreter, includes) template
-        }
+        (template: Template) : Result<string, RunnerError> =
+        renderTemplate' interpreter globals includes context template
+        |> Result.mapError runnerError
 
     /// <summary>
     /// Renders a template in environment specified by globals with provided includes lookup and context data.
@@ -131,6 +137,6 @@ module TemplateRunner =
     /// <returns>Result value with rendered template string in case of success or with the error string in case of failure.</returns>
     /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,System.String}"/>
     let renderTemplateWithDefaultInterpreter (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (context: KeyValuePair<string, string> seq)
-        (template: Template): Result<string, string> =
+        (template: Template): Result<string, RunnerError> =
         use interpreter = new EdgeJsInterpreter()
         renderTemplate interpreter globals includes context template

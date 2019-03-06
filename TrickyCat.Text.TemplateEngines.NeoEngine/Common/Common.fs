@@ -1,9 +1,14 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine
 
+open System
 open System.Text
 
 module Common =
+    let nl = Environment.NewLine
+
     let toString x = x.ToString()
+
+    let trim (s: string) = s.Trim()
 
     let fullMessage (e: exn) =
         let rec fullMessage' (sb: StringBuilder) (e: exn) =
