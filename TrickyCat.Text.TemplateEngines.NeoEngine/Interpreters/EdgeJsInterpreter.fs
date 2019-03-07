@@ -37,7 +37,7 @@ module EdgeJsInterpreter =
                .Add("script", jsString)
                .Add("drop", drop)
             |> fn.Invoke
-            |> (fun t -> try t.Result |> Ok with e -> e |> fullMessage |> Error)
+            |> (fun t -> try t.Result |> Ok with e -> e.InnerException |> fullMessage |> Error)
 
         interface IInterpreter with
             member __.Run jsString =

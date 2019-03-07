@@ -3,6 +3,7 @@
 open Newtonsoft.Json
 open System.Collections.Generic
 open System.IO
+open System
 open TrickyCat.Text.TemplateEngines.NeoEngine.Common
 
 module IoHelpers =
@@ -102,3 +103,9 @@ module IoHelpers =
             |> fullMessage
             |> sprintf "Error occured while writing to file: %s%sError: %s" filePath nl
             |> Error
+
+    let coloredPrint color printer =
+        let oldColor = Console.ForegroundColor
+        Console.ForegroundColor <- color
+        printer()
+        Console.ForegroundColor <- oldColor

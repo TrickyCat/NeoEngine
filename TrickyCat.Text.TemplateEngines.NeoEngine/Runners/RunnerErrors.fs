@@ -5,54 +5,83 @@ open TrickyCat.Text.TemplateEngines.NeoEngine.Common
 
 module RunnerErrors =
 
-    type JsReferenceErrorData = {
+    type JsErrorData = {
+        title: string
         lineNumber: int
-        errorMessage: string
+        errorMessage: string option
         failingString: string
         failingStringPointerHint: string
-        }
-
-    // JsSyntaxError
-    // JsTypeError
-    type RunnerError =
-    | JsReferenceError of JsReferenceErrorData
-    | GeneralError of string
+        stackTrace: string
+    }
         with
-        override x.ToString() =
-            match x with
-            | JsReferenceError r -> sprintf "JS Reference Error: %s%sJS Block Line: %d%sFailing string:%s%s%s%s" r.errorMessage nl r.lineNumber nl nl r.failingString nl r.failingStringPointerHint
-            | GeneralError s   -> sprintf "Error: %s" s
+        override r.ToString () =
+            sprintf "%s%s%sJS Block Line: %d%sFailing string:%s%s%s%s%s%sStack Trace:%s%s%s" 
+                r.title
+                (Option.defaultValue String.Empty (r.errorMessage |> Option.map (sprintf ": %s")))
+                nl r.lineNumber nl nl nl r.failingString nl r.failingStringPointerHint nl nl nl r.stackTrace
 
 
-    let private referenceErrorToken = "ReferenceError"
-    let private referenceErrorData =
+    type RunnerError =
+        | JsReferenceError of JsErrorData
+        | JsTypeError of JsErrorData
+        | JsSyntaxError of JsErrorData
+        | JsRangeError of JsErrorData
+        | JsError of JsErrorData
+        | GeneralError of string
+            with
+            override x.ToString() =
+                match x with
+                | JsReferenceError r
+                | JsTypeError r
+                | JsRangeError r
+                | JsError r
+                | JsSyntaxError r    -> r.ToString()
+                | GeneralError s     -> sprintf "Error: %s" s
+
+
+    let errorData errorToken title =
         function
         | null            -> None
         | (error: string) ->
-            let lines = error.Split([| "\r\n"; "\n" |], StringSplitOptions.RemoveEmptyEntries)
+            if error.Contains(sprintf "\n%s" errorToken) then
+                let lines = error.Split([| "\r\n"; "\n" |], StringSplitOptions.RemoveEmptyEntries)
 
-            if lines.Length > 3 && lines.[4].StartsWith referenceErrorToken then
-                let lineNumber = lines.[1].Split ':' |> Array.last |> int
-                let failingString = lines.[2]
-                let hint = lines.[3]
-                let errorMessage = lines.[4].Split ':' |> Array.last |> trim
-                Some { lineNumber = lineNumber; errorMessage = errorMessage; failingString = failingString; failingStringPointerHint = hint }
+                if lines.Length > 2 then
+                    let lineNumber = lines.[0].Split ':' |> Array.last |> int
+                    let failingString = lines.[1]
+                    let hint = lines.[2]
+
+                    let errorMessage =
+                        if lines.[3].Contains(":") then
+                            lines.[3].Split ':' |> Array.last |> trim |> Some
+                        else
+                            None
+                    let st = if lines.Length > 3 then String.Join("\n", lines.[4..] |> Array.map trim) else ""
+                    Some { title = title; lineNumber = lineNumber; errorMessage = errorMessage; failingString = failingString; failingStringPointerHint = hint; stackTrace = st }
+                else
+                    None
             else
                 None
 
-    let private referenceError = referenceErrorData >> Option.map JsReferenceError
 
-    let private generalError = GeneralError >> Some
-
+    let private referenceError = errorData "ReferenceError" "JS Reference Error" >> Option.map JsReferenceError
+    let private typeError      = errorData "TypeError"      "JS Type Error"      >> Option.map JsTypeError
+    let private syntaxError    = errorData "SyntaxError"    "JS Syntax Error"    >> Option.map JsSyntaxError
+    let private rangeError     = errorData "RangeError"     "JS Range Error"     >> Option.map JsRangeError
+    let private error          = errorData "Error"          "JS Error"           >> Option.map JsRangeError
+    let private generalError   = GeneralError >> Some
+    
     let private errorBuilders = seq {
         yield referenceError
+        yield typeError
+        yield syntaxError
+        yield rangeError
+        yield error
         yield generalError
     }
-
+    
     let runnerError error =
         errorBuilders
         |> Seq.map (fun f -> f error)
         |> Seq.find Option.isSome
         |> (fun o -> o.Value)
-
-

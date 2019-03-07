@@ -26,8 +26,8 @@ type ITemplateService =
     /// A sequence of named values available for lookup\reference from template or include customization block.
     /// Not null.
     /// </param>
-    /// <returns>Result value with rendered template string in case of success or with the error string in case of failure.</returns>
-    /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,System.String}"/>
+    /// <returns>Result value with rendered template string in case of success or with the error in case of failure.</returns>
+    /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors.RunnerError}"/>
     abstract RenderTemplateString:
         globals: string seq
         -> includes: IReadOnlyDictionary<string, string>

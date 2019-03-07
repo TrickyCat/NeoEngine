@@ -10,6 +10,7 @@ open System.Text
 open System.Collections.Generic
 open RunnerErrors
 
+
 module TemplateRunner =
 
     type private S = System.String
@@ -104,7 +105,7 @@ module TemplateRunner =
     /// Template's AST.
     /// </param>
     /// <returns>Result value with rendered template string in case of success or with the error in case of failure.</returns>
-    /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,System.String}"/>
+    /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors.RunnerError}"/>
     let renderTemplate 
         (interpreter: IInterpreter) (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (context: KeyValuePair<string, string> seq)
         (template: Template) : Result<string, RunnerError> =
@@ -134,8 +135,8 @@ module TemplateRunner =
     /// <param name="template">
     /// Template's AST.
     /// </param>
-    /// <returns>Result value with rendered template string in case of success or with the error string in case of failure.</returns>
-    /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,System.String}"/>
+    /// <returns>Result value with rendered template string in case of success or with the error in case of failure.</returns>
+    /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors.RunnerError}"/>
     let renderTemplateWithDefaultInterpreter (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (context: KeyValuePair<string, string> seq)
         (template: Template): Result<string, RunnerError> =
         use interpreter = new EdgeJsInterpreter()

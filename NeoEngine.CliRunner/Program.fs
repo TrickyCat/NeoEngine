@@ -18,14 +18,12 @@ module Main =
         {| result = result; duration = watch.Elapsed |}
 
 
-    let private logDuration duration =
-        let color = Console.ForegroundColor
-        Console.ForegroundColor <- ConsoleColor.Cyan
-        printfn "Execution duration: %A" duration
-        Console.ForegroundColor <- color
+    let private printDuration duration =
+        coloredPrint ConsoleColor.Cyan (fun () -> printfn "Execution duration: %A" duration)
 
 
     let private renderSvc = TemplateService() :> ITemplateService
+
 
     let private writeToConsole suppressOutput content =
         if not suppressOutput then
@@ -39,7 +37,7 @@ module Main =
         let! globals = getGlobalsFromFolder options.GlobalsFolderPath
 
         let timedResult = timed renderSvc.RenderTemplateString globals includes template context
-        logDuration timedResult.duration
+        printDuration timedResult.duration
         let! result = timedResult.result |> Result.mapError toString
 
         writeToConsole options.SuppressOutputToConsole result
@@ -47,12 +45,8 @@ module Main =
         return ()
         }
 
-
     let private printError error =
-        let color = Console.ForegroundColor
-        Console.ForegroundColor <- ConsoleColor.Red
-        printfn "%s%s" nl error
-        Console.ForegroundColor <- color
+        coloredPrint ConsoleColor.Red (fun () -> printfn "%s%s" nl error)
 
 
     let private outputErrors (result: Result<_, string>) =
