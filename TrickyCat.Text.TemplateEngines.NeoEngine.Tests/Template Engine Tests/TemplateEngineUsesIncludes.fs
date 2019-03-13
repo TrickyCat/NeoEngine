@@ -50,7 +50,8 @@ module ``Template Engine Uses Includes`` =
 
     [<Test; TestCaseSource("missingIncludesTestData")>]
     let ``Template Engine Should Signal On Missing Includes Referenced In Template`` templateString =
-        runEngineOnMalformedInputs emptyGlobals includes emptyContext templateString
+        renderTemplate emptyGlobals includes emptyContext templateString
+        |> shouldEqual (Ok "")
 
 
     let private malformedIncludesTestData: obj [][] = [|
@@ -78,5 +79,6 @@ module ``Template Engine Uses Includes`` =
 
     [<Test; TestCaseSource("malformedIncludesTestData")>]
     let ``Template Engine Should Signal On Malformed Includes Referenced In Template`` templateString includes =
-        runEngineOnMalformedInputs emptyGlobals includes emptyContext templateString
+        renderTemplate emptyGlobals includes emptyContext templateString
+        |> shouldEqual (Ok "")
 

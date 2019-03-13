@@ -4,6 +4,7 @@ open System
 open EventsQueue
 open Common
 open FakeEmailSender
+open TrickyCat.Text.TemplateEngines.NeoEngine.Common
 
 module SimpleEventsProcessor =
 
@@ -41,7 +42,7 @@ module SimpleEventsProcessor =
                 |> Result.mapError (fun e ->
                     let color = Console.ForegroundColor
                     Console.ForegroundColor <- ConsoleColor.Red
-                    printfn "ERROR: %s" e
+                    e |> toString |> printfn "ERROR: %s"
                     Console.ForegroundColor <- color
                     )
                 |> ignore

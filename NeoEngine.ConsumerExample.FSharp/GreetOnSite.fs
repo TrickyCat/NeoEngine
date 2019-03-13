@@ -13,7 +13,7 @@ module GreetOnSite =
         <%= formatDate(new Date(), '%4Y') %>
     """
 
-    let private templateRenderer: KeyValuePair<string, string> seq -> Result<string, string> =
+    let private templateRenderer: KeyValuePair<string, string> seq -> Result<string, _> =
         renderSvc.RenderTemplateString emptyGlobals emptyIncludes template
 
     let renderWithContext = templateRenderer

@@ -6,12 +6,12 @@ open TrickyCat.Text.TemplateEngines.NeoEngine.Common
 module RunnerErrors =
 
     type JsErrorData = {
-        title: string
-        lineNumber: int
-        errorMessage: string option
-        failingString: string
+        title:                    string
+        lineNumber:               int
+        errorMessage:             string option
+        failingString:            string
         failingStringPointerHint: string
-        stackTrace: string
+        stackTrace:               string
     }
         with
         override r.ToString () =
@@ -23,11 +23,12 @@ module RunnerErrors =
 
     type RunnerError =
         | JsReferenceError of JsErrorData
-        | JsTypeError of JsErrorData
-        | JsSyntaxError of JsErrorData
-        | JsRangeError of JsErrorData
-        | JsError of JsErrorData
-        | GeneralError of string
+        | JsTypeError      of JsErrorData
+        | JsSyntaxError    of JsErrorData
+        | JsRangeError     of JsErrorData
+        | JsURIError       of JsErrorData
+        | JsError          of JsErrorData
+        | GeneralError     of string
             with
             override x.ToString() =
                 match x with
@@ -35,11 +36,12 @@ module RunnerErrors =
                 | JsTypeError r
                 | JsRangeError r
                 | JsError r
+                | JsURIError r
                 | JsSyntaxError r    -> r.ToString()
                 | GeneralError s     -> sprintf "Error: %s" s
 
 
-    let errorData errorToken title =
+    let private errorData errorToken title =
         function
         | null            -> None
         | (error: string) ->
@@ -68,7 +70,8 @@ module RunnerErrors =
     let private typeError      = errorData "TypeError"      "JS Type Error"      >> Option.map JsTypeError
     let private syntaxError    = errorData "SyntaxError"    "JS Syntax Error"    >> Option.map JsSyntaxError
     let private rangeError     = errorData "RangeError"     "JS Range Error"     >> Option.map JsRangeError
-    let private error          = errorData "Error"          "JS Error"           >> Option.map JsRangeError
+    let private uriError       = errorData "URIError"       "JS URI Error"       >> Option.map JsURIError
+    let private error          = errorData "Error"          "JS Error"           >> Option.map JsError
     let private generalError   = GeneralError >> Some
     
     let private errorBuilders = seq {
@@ -76,6 +79,7 @@ module RunnerErrors =
         yield typeError
         yield syntaxError
         yield rangeError
+        yield uriError
         yield error
         yield generalError
     }

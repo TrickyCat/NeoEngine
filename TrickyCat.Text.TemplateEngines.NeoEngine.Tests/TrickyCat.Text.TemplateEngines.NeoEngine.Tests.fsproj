@@ -57,6 +57,7 @@
     <Compile Include="Parser Tests\NeoBlockParserTests.fs" />
     <Compile Include="Parser Tests\ParserOptimizationsTests.fs" />
     <Compile Include="Parser Tests\ParserTransformationsTests.fs" />
+    <Compile Include="Template Engine Tests\ErrorsHelper.fs" />
     <Compile Include="Template Engine Tests\TemplateEngineTestsCommon.fs" />
     <Compile Include="Template Engine Tests\TemplateEngineRunsOnTemplatesWithoutCustomizations.fs" />
     <Compile Include="Template Engine Tests\TemplateEngineRendersSimpleSubstitutions.fs" />

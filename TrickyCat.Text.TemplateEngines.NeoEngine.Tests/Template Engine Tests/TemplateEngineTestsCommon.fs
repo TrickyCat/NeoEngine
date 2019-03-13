@@ -1,24 +1,14 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests
 
-open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunner
-open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi
-open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
-open FsUnitTyped
-open System
+open TrickyCat.Text.TemplateEngines.NeoEngine.Services
+open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors
 
 module ``Template Engine Tests Common`` = 
-    let renderTemplate globals includes context templateString =
-            templateString
-            |> runParserOnString
-            >>= renderTemplateWithDefaultInterpreter globals includes context
-            |> (function
-                | Ok x    -> x
-                | Error e -> failwithf "Rendering Error In Test: %s" e
-            )
+    let private templateSvc = TemplateService() :> ITemplateService
 
-    let runEngineOnMalformedInputs globals includes context templateString =
-        shouldFail<Exception> (fun () ->
-            renderTemplate globals includes context templateString
-            |> ignore
-        )
-        
+    let renderOk : string -> Result<string, RunnerError> = Ok
+
+    let renderError : RunnerError -> Result<string, RunnerError> = Error
+
+    let renderTemplate globals includes context template =
+            templateSvc.RenderTemplateString globals includes template context

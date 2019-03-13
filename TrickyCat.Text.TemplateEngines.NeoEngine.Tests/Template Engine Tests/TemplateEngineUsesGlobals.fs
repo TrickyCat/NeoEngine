@@ -4,23 +4,26 @@ open ``Template Engine Tests Common``
 open FsUnitTyped
 open NUnit.Framework
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunnerHelpers
+open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors
+open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.Common
+open ErrorsCommon
 
 module ``Template Engine Uses Globals`` =
 
     let private successTestData: obj [][] = [|
-        [| "<%= greet('World') %>"; "Hello, World!" |]
-        [| "<%= f() %>"; "" |]
-        [| "<%= f(x) %>"; "" |]
-        [| "<%= f(100) %>"; "" |]
-        [| "<%= foo(11) %>"; "221" |]
-        [| "<%= greet(foo(10)) %>"; "Hello, 200!" |]
-        [| "<%= greet(foo(10)) + '' + f() %>"; "" |]
-        [| "<%= greet(foo(10)) %><%= f() %><%= f(x) %>"; "Hello, 200!" |]
+        [| "<%= greet('World') %>"; renderOk "Hello, World!" |]
+        [| "<%= f() %>"; renderOk "" |]
+        [| "<%= f(x) %>"; renderOk "" |]
+        [| "<%= f(100) %>"; renderOk "" |]
+        [| "<%= foo(11) %>"; renderOk "221" |]
+        [| "<%= greet(foo(10)) %>"; renderOk "Hello, 200!" |]
+        [| "<%= greet(foo(10)) + '' + f() %>"; renderOk "" |]
+        [| "<%= greet(foo(10)) %><%= f() %><%= f(x) %>"; renderOk "Hello, 200!" |]
 
-        [| "<%= magicNumber %>"; "7" |]
-        [| "<%= magicNumber2 %>"; "10" |]
-        [| "<%= magicNumber3 %>"; "3" |]
-        [| "<%= magicNumber4 %>"; "9" |]
+        [| "<%= magicNumber %>"; renderOk "7" |]
+        [| "<%= magicNumber2 %>"; renderOk "10" |]
+        [| "<%= magicNumber3 %>"; renderOk "3" |]
+        [| "<%= magicNumber4 %>"; renderOk "9" |]
 
     |]
 
@@ -68,8 +71,8 @@ module ``Template Engine Uses Globals`` =
 
     [<Test; TestCaseSource("noOverridesForGlobalConstantsTestData")>]
     let ``Template can't override global 'const' bindings`` templateString =
-        runEngineOnMalformedInputs (seq { yield "const c1 = 1;" }) emptyIncludes emptyContext templateString
-
+        renderTemplate (seq { yield "const c1 = 1;" }) emptyIncludes emptyContext templateString
+        |> shouldRenderFailWith (ErrorsHelper.error (JsSyntaxError, ``title?`` = ""))
 
 
     let private noOverridesForGlobalLetsTestData: obj [][] = [| 
@@ -80,8 +83,8 @@ module ``Template Engine Uses Globals`` =
 
     [<Test; TestCaseSource("noOverridesForGlobalLetsTestData")>]
     let ``Template can't override global 'let' bindings`` templateString =
-        runEngineOnMalformedInputs (seq { yield "let l1 = 100;" }) emptyIncludes emptyContext templateString
-
+        renderTemplate (seq { yield "let l1 = 100;" }) emptyIncludes emptyContext templateString
+        |> shouldEqual (Ok "")
 
 
 
@@ -92,15 +95,15 @@ module ``Template Engine Uses Globals`` =
 
     [<Test; TestCaseSource("noOverridesForGlobalVarsTestData")>]
     let ``Template can't override global 'var' bindings with 'let' and 'const'`` templateString =
-        runEngineOnMalformedInputs (seq { yield "var v1 = 100;" }) emptyIncludes emptyContext templateString
-
+        renderTemplate (seq { yield "var v1 = 100;" }) emptyIncludes emptyContext templateString
+        |> shouldEqual (Ok "")
 
 
 
     let private overridesForGlobalVarsTestData: obj [][] = [| 
-        [| "<%= v1 %>"; "1" |]
-        [| "<%= v1 %><% v1 = 2; %><%= v1 %>"; "12" |]
-        [| "<%= v1 %><% var v1 = 2; %><%= v1 %>"; "12" |]
+        [| "<%= v1 %>"; renderOk "1" |]
+        [| "<%= v1 %><% v1 = 2; %><%= v1 %>"; renderOk "12" |]
+        [| "<%= v1 %><% var v1 = 2; %><%= v1 %>"; renderOk "12" |]
     |]
 
     [<Test; TestCaseSource("overridesForGlobalVarsTestData")>]
@@ -111,9 +114,9 @@ module ``Template Engine Uses Globals`` =
 
 
     let private overridesForGlobalImplicitVarsTestData: obj [][] = [| 
-        [| "<%= v1 %>"; "1" |]
-        [| "<%= v1 %><% v1 = 2; %><%= v1 %>"; "12" |]
-        [| "<%= v1 %><% var v1 = 2; %><%= v1 %>"; "12" |]
+        [| "<%= v1 %>"; renderOk "1" |]
+        [| "<%= v1 %><% v1 = 2; %><%= v1 %>"; renderOk "12" |]
+        [| "<%= v1 %><% var v1 = 2; %><%= v1 %>"; renderOk "12" |]
     |]
 
     [<Test; TestCaseSource("overridesForGlobalImplicitVarsTestData")>]
@@ -124,11 +127,11 @@ module ``Template Engine Uses Globals`` =
 
 
     let private canLookupGlobalValues: obj [] seq = seq {
-        yield [| "<%= v1 %>"; "100" |]
-        yield [| "<%= c1 %>"; "200" |]
-        yield [| "<%= l1 %>"; "300" |]
-        yield [| "<%= v2 %>"; "400" |]
-        yield [| "<%= !!(f) %>"; "true" |]
+        yield [| "<%= v1 %>"; renderOk "100" |]
+        yield [| "<%= c1 %>"; renderOk "200" |]
+        yield [| "<%= l1 %>"; renderOk "300" |]
+        yield [| "<%= v2 %>"; renderOk "400" |]
+        yield [| "<%= !!(f) %>"; renderOk "true" |]
     }
 
     [<Test; TestCaseSource("canLookupGlobalValues")>]
