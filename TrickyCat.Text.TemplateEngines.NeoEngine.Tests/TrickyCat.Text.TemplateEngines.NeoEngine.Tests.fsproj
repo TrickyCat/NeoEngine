@@ -65,6 +65,7 @@
     <Compile Include="Template Engine Tests\TemplateEngineUsesIncludes.fs" />
     <Compile Include="Template Engine Tests\MembersInIncludesOverrideMembersInGlobalsWithTheSameNameInTemplateEngine.fs" />
     <Compile Include="Template Engine Tests\TemplateEngineTests.fs" />
+    <Compile Include="Template Engine Tests\ErrorsHelper2.fs" />
     <Compile Include="Js Globals Tests\formatDateTests.fs" />
     <Compile Include="AssemblyInfo.fs" />
     <Content Include="packages.config" />

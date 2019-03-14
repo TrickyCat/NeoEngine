@@ -28,6 +28,10 @@ module RunnerErrors =
         | JsRangeError     of JsErrorData
         | JsURIError       of JsErrorData
         | JsError          of JsErrorData
+
+        //| IncludeNotFound  of string
+        //| ParsingError  of string
+
         | GeneralError     of string
             with
             override x.ToString() =
@@ -41,7 +45,7 @@ module RunnerErrors =
                 | GeneralError s     -> sprintf "Error: %s" s
 
 
-    let private errorData errorToken title =
+    let private jsErrorData errorToken title =
         function
         | null            -> None
         | (error: string) ->
@@ -54,7 +58,7 @@ module RunnerErrors =
                     let hint = lines.[2]
 
                     let errorMessage =
-                        if lines.[3].Contains(":") then
+                        if lines.[3].Contains(":") then                         //TODO: check index!!!!!!
                             lines.[3].Split ':' |> Array.last |> trim |> Some
                         else
                             None
@@ -66,21 +70,21 @@ module RunnerErrors =
                 None
 
 
-    let private referenceError = errorData "ReferenceError" "JS Reference Error" >> Option.map JsReferenceError
-    let private typeError      = errorData "TypeError"      "JS Type Error"      >> Option.map JsTypeError
-    let private syntaxError    = errorData "SyntaxError"    "JS Syntax Error"    >> Option.map JsSyntaxError
-    let private rangeError     = errorData "RangeError"     "JS Range Error"     >> Option.map JsRangeError
-    let private uriError       = errorData "URIError"       "JS URI Error"       >> Option.map JsURIError
-    let private error          = errorData "Error"          "JS Error"           >> Option.map JsError
+    let private jsReferenceError = jsErrorData "ReferenceError" "JS Reference Error" >> Option.map JsReferenceError
+    let private jsTypeError      = jsErrorData "TypeError"      "JS Type Error"      >> Option.map JsTypeError
+    let private jsSyntaxError    = jsErrorData "SyntaxError"    "JS Syntax Error"    >> Option.map JsSyntaxError
+    let private jsRangeError     = jsErrorData "RangeError"     "JS Range Error"     >> Option.map JsRangeError
+    let private jsUriError       = jsErrorData "URIError"       "JS URI Error"       >> Option.map JsURIError
+    let private jsError          = jsErrorData "Error"          "JS Error"           >> Option.map JsError
     let private generalError   = GeneralError >> Some
     
     let private errorBuilders = seq {
-        yield referenceError
-        yield typeError
-        yield syntaxError
-        yield rangeError
-        yield uriError
-        yield error
+        yield jsReferenceError
+        yield jsTypeError
+        yield jsSyntaxError
+        yield jsRangeError
+        yield jsUriError
+        yield jsError
         yield generalError
     }
     

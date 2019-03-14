@@ -4,19 +4,26 @@ open ``Template Engine Tests Common``
 open FsUnitTyped
 open NUnit.Framework
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunnerHelpers
+open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors
+open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.Common
+open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.Common.ErrorsCommon
+
 
 module ``Template Engine Uses Includes`` =
 
+    type private E = ErrorsHelper
+
     let private successTestData: obj [][] = [|
-        [| "<%= greet('World') %>"; "" |]
-        [| "<%@ include view='include1' %><%= greet('World') %>"; "Hello, World!" |]
-        [| "<%@ include view='include1' %><%@ include view='include2' %><%= greet('World') %>"; "Hello, World! (from include2)" |]
-        [| "<%@ include view='include2' %><%@ include view='include1' %><%= greet('World') %>"; "Hello, World!" |]
-        [| "<%= greet('World') %><%@ include view='include1' %><%= greet('World') %> <%@ include view='include2' %><%= greet('World') %>"; "Hello, World! Hello, World! (from include2)" |]
+        [| "<%= greet('World') %>"; renderOk "" |]
+        [| "<%@ include view='include1' %><%= greet('World') %>"; renderOk "Hello, World!" |]
+        [| "<%@ include view='include1' %><%@ include view='include2' %><%= greet('World') %>"; renderOk "Hello, World! (from include2)" |]
+        [| "<%@ include view='include2' %><%@ include view='include1' %><%= greet('World') %>"; renderOk "Hello, World!" |]
+        [| "<%= greet('World') %><%@ include view='include1' %><%= greet('World') %> <%@ include view='include2' %><%= greet('World') %>";
+            renderOk "Hello, World! Hello, World! (from include2)" |]
         
 
         //[| "<%@ include view='include1' %><%@ include view='include2' %><%= magicNumber %>"; "" |]
-        [| "<%= magicNumber %>"; "" |]
+        [| "<%= magicNumber %>"; renderOk "" |]
         //[| "<%@ include view='include1' %><%= magicNumber %>"; "42" |]
         //[| "<%@ include view='include2' %><%= magicNumber %>"; "" |]
     |]
@@ -45,13 +52,13 @@ module ``Template Engine Uses Includes`` =
 
 
     let private missingIncludesTestData: obj [][] = [|
-        [| "<%@ include view='someInclude' %><%= greet('World') %>" |]
+        [| "<%@ include view='someInclude' %><%= greet('World') %>"; E.jsError (JsError) |]
         |]
 
     [<Test; TestCaseSource("missingIncludesTestData")>]
-    let ``Template Engine Should Signal On Missing Includes Referenced In Template`` templateString =
+    let ``Template Engine Should Signal On Missing Includes Referenced In Template`` templateString expected =
         renderTemplate emptyGlobals includes emptyContext templateString
-        |> shouldEqual (Ok "")
+        |> shouldRenderFailWith expected
 
 
     let private malformedIncludesTestData: obj [][] = [|

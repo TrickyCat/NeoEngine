@@ -39,7 +39,7 @@ type ITemplateService =
 type TemplateService() = 
     interface ITemplateService with
         member __.RenderTemplateString globals includes template context = 
-                template
-                |> runParserOnString
-                |> Result.mapError runnerError
-                >>= renderTemplateWithDefaultInterpreter globals includes context
+            template
+            |> runParserOnString
+            |> Result.mapError runnerError
+            >>= renderTemplateWithDefaultInterpreter globals includes context

@@ -53,6 +53,7 @@
     <None Include="DevHelpers\formatDate Helper.fsx" />
     <Compile Include="Common\Common.fs" />
     <Compile Include="Common\ResultCommon.fs" />
+    <Compile Include="Errors\Errors.fs" />
     <Compile Include="Parsers\NeoTemplateParserCore.fs" />
     <Compile Include="Parsers\NeoTemplateParserApi.fs" />
     <Compile Include="Interpreters\InterpreterBase.fs" />

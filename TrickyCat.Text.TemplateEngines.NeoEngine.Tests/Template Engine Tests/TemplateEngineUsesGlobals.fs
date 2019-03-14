@@ -10,6 +10,8 @@ open ErrorsCommon
 
 module ``Template Engine Uses Globals`` =
 
+    type private E = ErrorsHelper
+
     let private successTestData: obj [][] = [|
         [| "<%= greet('World') %>"; renderOk "Hello, World!" |]
         [| "<%= f() %>"; renderOk "" |]
@@ -60,43 +62,41 @@ module ``Template Engine Uses Globals`` =
         |> shouldEqual expected
 
 
-
-
     let private noOverridesForGlobalConstantsTestData: obj [][] = [| 
-        [| "<% const c1 = 2; %>" |]
-        [| "<% let c1 = 2; %>" |]
-        [| "<% var c1 = 2; %>" |]
-        [| "<% c1 = 2; %>" |]
+        [| "<% const c1 = 2; %>"; E.jsError (JsSyntaxError) |]
+        [| "<% let c1 = 2; %>"; E.jsError (JsSyntaxError) |]
+        [| "<% var c1 = 2; %>"; E.jsError (JsSyntaxError) |]
+        [| "<% c1 = 2; %>"; E.jsError (JsTypeError) |]
     |]
 
     [<Test; TestCaseSource("noOverridesForGlobalConstantsTestData")>]
-    let ``Template can't override global 'const' bindings`` templateString =
+    let ``Template can't override global 'const' bindings`` templateString expected =
         renderTemplate (seq { yield "const c1 = 1;" }) emptyIncludes emptyContext templateString
-        |> shouldRenderFailWith (ErrorsHelper.error (JsSyntaxError, ``title?`` = ""))
+        |> shouldRenderFailWith expected
 
 
     let private noOverridesForGlobalLetsTestData: obj [][] = [| 
-        [| "<% const l1 = 2; %>" |]
-        [| "  <% let l1 = 2; %>" |]
-        [| "  <% var l1 = 2; %>" |]
+        [| "<% const l1 = 2; %>"; E.jsError (JsSyntaxError) |]
+        [| "  <% let l1 = 2; %>"; E.jsError (JsSyntaxError) |]
+        [| "  <% var l1 = 2; %>"; E.jsError (JsSyntaxError) |]
     |]
 
     [<Test; TestCaseSource("noOverridesForGlobalLetsTestData")>]
-    let ``Template can't override global 'let' bindings`` templateString =
+    let ``Template can't override global 'let' bindings`` templateString expected =
         renderTemplate (seq { yield "let l1 = 100;" }) emptyIncludes emptyContext templateString
-        |> shouldEqual (Ok "")
+        |> shouldRenderFailWith expected
 
 
 
     let private noOverridesForGlobalVarsTestData: obj [][] = [| 
-        [| "<% const v1 = 2; %>" |]
-        [| "  <% let v1 = 2; %>" |]
+        [| "<% const v1 = 2; %>"; E.jsError (JsSyntaxError) |]
+        [| "  <% let v1 = 2; %>"; E.jsError (JsSyntaxError) |]
     |]
 
     [<Test; TestCaseSource("noOverridesForGlobalVarsTestData")>]
-    let ``Template can't override global 'var' bindings with 'let' and 'const'`` templateString =
+    let ``Template can't override global 'var' bindings with 'let' and 'const'`` templateString expected =
         renderTemplate (seq { yield "var v1 = 100;" }) emptyIncludes emptyContext templateString
-        |> shouldEqual (Ok "")
+        |> shouldRenderFailWith expected
 
 
 

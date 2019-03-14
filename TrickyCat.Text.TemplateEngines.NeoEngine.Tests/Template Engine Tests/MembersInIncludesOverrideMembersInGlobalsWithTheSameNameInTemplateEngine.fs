@@ -9,10 +9,10 @@ module ``Members In Includes Override Members In Globals With The Same Name In T
 
     let private successTestData: obj [][] = [|
         //[| ""; "" |]
-        [| "<%= greet('World') %>"; "Hi, global World!" |]
-        [| "<%@ include view='include1' %><%= greet('World') %>"; "Hello, World!" |]
+        [| "<%= greet('World') %>"; renderOk "Hi, global World!" |]
+        [| "<%@ include view='include1' %><%= greet('World') %>"; renderOk "Hello, World!" |]
         
-        [| "<%@ include view='include1' %><%= magicNumber %>"; "100" |]
+        [| "<%@ include view='include1' %><%= magicNumber %>"; renderOk "100" |]
         
     |]
 
