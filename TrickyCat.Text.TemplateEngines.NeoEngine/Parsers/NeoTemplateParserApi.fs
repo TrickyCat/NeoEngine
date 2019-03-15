@@ -3,6 +3,7 @@
 open FParsec
 open NeoTemplateParserCore
 open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
+open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
 open System
 
 module NeoTemplateParserApi =
@@ -167,7 +168,7 @@ module NeoTemplateParserApi =
     /// <summary>
     /// Runs the <see cref="TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi.templateParser" /> on specified string
     /// </summary>
-    let runParserOnString string : Result<Template, string> =
+    let runParserOnString string : Result<Template, EngineError> =
         match run templateParser string with
-        | Success(result, _, _)   -> result
-        | Failure(errorMsg, _, _) -> Result.Error errorMsg
+        | Success(result, _, _)   -> result |> Result.mapError parseError
+        | Failure(errorMsg, _, _) -> errorMsg |> parseError |> Result.Error

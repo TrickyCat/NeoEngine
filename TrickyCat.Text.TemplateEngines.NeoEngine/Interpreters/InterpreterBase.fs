@@ -1,6 +1,7 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters
 
 open System
+open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
 
 module InterpreterBase =
     // TODO: specify other use cases!
@@ -17,6 +18,6 @@ module InterpreterBase =
     /// </summary>
     type IInterpreter =
         inherit IDisposable
-        abstract Run      : string -> Result<unit, string>
-        abstract Eval     : string -> Result<obj, string>
-        abstract Eval<'a> : string -> Result<'a, string>
+        abstract Run      : string -> Result<unit, EngineError>
+        abstract Eval     : string -> Result<obj,  EngineError>
+        abstract Eval<'a> : string -> Result<'a,   EngineError>

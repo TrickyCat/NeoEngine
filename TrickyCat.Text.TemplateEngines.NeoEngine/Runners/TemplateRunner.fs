@@ -8,8 +8,8 @@ open TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters.InterpreterBase
 open TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters.EdgeJsInterpreter
 open System.Text
 open System.Collections.Generic
-open RunnerErrors
-
+//open RunnerErrors
+open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
 
 module TemplateRunner =
 
@@ -33,11 +33,21 @@ module TemplateRunner =
         | NeoIncludeView viewName ->
             let (viewFound, viewTemplateString) = includes.TryGetValue(viewName)
             if not viewFound then
-                Error <| sprintf "Include not found: %s." viewName
+                viewName
+                |> sprintf "Include not found: %s."
+                |> includeNotFound
+                |> Error
             else
                 viewTemplateString
                 |> runParserOnString
-                |> Result.mapError (sprintf "Parse of include failed.\nInclude: %s.\nError: %s." viewName)
+                |> Result.mapError (function
+                    | ParserError (ParseError p) ->
+                        p
+                        |> sprintf "Parse of include failed.\nInclude: %s\nError: %s" viewName
+                        |> ParseError
+                        |> ParserError
+                    | x -> x
+                    )
                 |> Result.bind (processTemplate'(sb, interpreter, includes))
 
         | NeoSubstitute s ->
