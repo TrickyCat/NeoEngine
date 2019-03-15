@@ -62,7 +62,7 @@ module Errors =
     | ScriptError  of JsError
     | RunnerError  of RunnerError
     | ParserError  of ParserError
-    | GeneralError of string
+    | GeneralError of message: string
         with
         override x.ToString () =
             match x with

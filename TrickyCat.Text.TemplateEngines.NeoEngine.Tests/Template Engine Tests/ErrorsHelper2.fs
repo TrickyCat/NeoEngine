@@ -11,32 +11,36 @@ module ErrorsCommon2 =
         errorMessageSet : bool
     }
 
-    type JsMetaError = {
-        meta: JsErrorDataMeta
-        error: JsError
-    }
-
     type RunnerErrorMeta = {
         includeNameSet : bool
-    }
-
-    type RunnerMetaError = {
-        meta: RunnerErrorMeta
-        error: RunnerError
     }
 
     type ParserErrorMeta = {
         messageSet: bool
     }
 
-    
+    type GeneralErrorMeta = {
+        messageSet: bool
+    }
 
     type MetaError<'a, 'b> = {
-        meta: 'a
+        meta:  'a
         error: 'b
     }
 
+    type JsMetaError = MetaError<JsErrorDataMeta, JsError>
+
+    type RunnerMetaError = MetaError<RunnerErrorMeta, RunnerError>
+
     type ParserMetaError = MetaError<ParserErrorMeta, ParserError>
+
+    type GeneralMetaError = MetaError<GeneralErrorMeta, string>
+
+    type TestError =
+    | JsMetaError of JsMetaError
+    | RunnerMetaError of RunnerMetaError
+    | ParserMetaError of ParserMetaError
+    | GeneralMetaError of GeneralMetaError
 
     let fail s = s |> AssertionException |> raise
 
@@ -47,30 +51,28 @@ module ErrorsCommon2 =
             fail <| errorMsg()
 
 
-    let checkTitle shouldCheck generatedTitle title =
-        checkString shouldCheck
-            (fun () -> sprintf "Error's title does not contain expected text.\nExpected: %s\nActual: %s" generatedTitle title)
-            generatedTitle title
+    let checkJsErrorData meta genJsErrorData actualJsErrorData =
+
+        checkString meta.titleSet
+            (fun () -> sprintf "Error's title does not contain expected text.\nExpected: %s\nActual: %s" genJsErrorData.title actualJsErrorData.title)
+            genJsErrorData.title actualJsErrorData.title
 
 
-    let checkFailingString shouldCheck generatedFailingString failingString =
-        checkString shouldCheck
-            (fun () -> sprintf "Error's failing string value does not contain expected text.\nExpected: %s\nActual: %s" generatedFailingString failingString)
-            generatedFailingString failingString
+        checkString meta.failingStringSet
+            (fun () -> sprintf "Error's failing string value does not contain expected text.\nExpected: %s\nActual: %s" genJsErrorData.failingString actualJsErrorData.failingString)
+            genJsErrorData.failingString actualJsErrorData.failingString
 
 
-    let checkErrorMessage shouldCheck generatedErrorMessage errorMessage =
-        checkString shouldCheck
-            (fun () -> sprintf "Error's message does not contain expected text.\nExpected: %s\nActual: %s" generatedErrorMessage errorMessage)
-            generatedErrorMessage errorMessage
+        match genJsErrorData.errorMessage, actualJsErrorData.errorMessage with
+        | Some expected, Some actual ->
+            checkString meta.errorMessageSet
+                (fun () -> sprintf "Error's message does not contain expected text.\nExpected: %A\nActual: %A" genJsErrorData.errorMessage actualJsErrorData.errorMessage)
+                expected actual
+        | _ ->
+            fail <| sprintf "JS error message mismatch.\nExpected: %A\nActual: %A" genJsErrorData.errorMessage actualJsErrorData.errorMessage
 
 
-    let compareJsErrorData meta genJsErrorData actualJsErrorData =
-        checkTitle          meta.titleSet          genJsErrorData.title          actualJsErrorData.title
-        checkFailingString  meta.failingStringSet  genJsErrorData.failingString  actualJsErrorData.failingString
-        checkErrorMessage   meta.errorMessageSet   genJsErrorData.failingString  actualJsErrorData.failingString
-
-    let compareJsErrors { JsMetaError.meta = meta; error = generatedError } actualJsError =
+    let checkScriptErrors { JsMetaError.meta = meta; error = generatedError } actualJsError =
         match generatedError, actualJsError with
         | JsReferenceError r1, JsReferenceError r2
         | JsTypeError r1,      JsTypeError r2
@@ -78,27 +80,59 @@ module ErrorsCommon2 =
         | JsRangeError r1,     JsRangeError r2
         | JsURIError r1,       JsURIError r2
         | JsError r1,          JsError r2
-               -> compareJsErrorData meta r1 r2
+               -> checkJsErrorData meta r1 r2
         | _, _ -> fail <| sprintf "JS error type mismatch.\nExpected: %A.\nActual: %A" generatedError actualJsError
 
 
 
-    let compareIncludeNotFoundErrorData meta expectedErrorData actualErrorData =
+    let checkIncludeNotFoundErrorData meta expectedErrorData actualErrorData =
         checkString meta.includeNameSet
             (fun () -> sprintf "Missing include name mismatch.\nExpected: %s\nActual: %s" expectedErrorData actualErrorData)
             expectedErrorData actualErrorData
 
 
-    let compareRunnerErrors { RunnerMetaError.meta = meta; error = expectedError } actualRunnerError =
+    let checkRunnerErrors { RunnerMetaError.meta = meta; error = expectedError } actualRunnerError =
         match expectedError, actualRunnerError with
-        | IncludeNotFound n1, IncludeNotFound n2 -> compareIncludeNotFoundErrorData meta n1 n2
-        ()
+        | IncludeNotFound n1, IncludeNotFound n2 -> checkIncludeNotFoundErrorData meta n1 n2
 
-    //let shouldRenderFailWith ({ error = generatedError} as metaError) (renderResult: Result<string, EngineError>) =
-    //    renderResult
-    //    |> Result.map (fun x -> fail <| sprintf "Unexpected rendering success result.\nExpected: %A\nActual: %A" generatedError x)
-    //    |> Result.mapError (compareJsErrors metaError)
-    //    |> ignore
+
+    let checkParseErrorData (meta : ParserErrorMeta) expectedErrorData actualErrorData =
+        checkString meta.messageSet
+            (fun () -> sprintf "Error's message does not contain expected text.\nExpected: %s\nActual: %s" expectedErrorData actualErrorData)
+            expectedErrorData actualErrorData
+
+    let checkParserErrors { ParserMetaError.meta = meta; error = expectedError } actualParserError =
+        match expectedError, actualParserError with
+        | ParseError p1, ParseError p2 -> checkParseErrorData meta p1 p2
+
+    let checkGeneralErrors { GeneralMetaError.meta = meta; error = expectedError } actualError =
+        checkString meta.messageSet
+            (fun () -> sprintf "Error's message does not contain expected text.\nExpected: %s\nActual: %s" expectedError actualError)
+            expectedError actualError
+
+
+    let expectedError = function
+        | JsMetaError e      -> ScriptError e.error
+        | RunnerMetaError e  -> RunnerError e.error
+        | ParserMetaError e  -> ParserError e.error
+        | GeneralMetaError e -> GeneralError e.error
+
+
+    let checkErrors expected actual =
+        match expected, actual with
+        | JsMetaError m,      ScriptError e  -> checkScriptErrors  m e
+        | RunnerMetaError m,  RunnerError e  -> checkRunnerErrors  m e
+        | ParserMetaError m,  ParserError e  -> checkParserErrors  m e
+        | GeneralMetaError m, GeneralError e -> checkGeneralErrors m e
+        | _, _ ->
+            fail <| sprintf "Error type mismatch.\nExpected: %A\nActual: %A" (expectedError expected) actual
+
+
+    let shouldRenderFailWith testError (renderResult: Result<string, EngineError>) =
+        renderResult
+        |> Result.map (fun x -> fail <| sprintf "Unexpected engine success result.\nExpected: %A\nActual: %A" (expectedError testError) x)
+        |> Result.mapError (checkErrors testError)
+        |> ignore
 
 
 open ErrorsCommon2
@@ -123,10 +157,26 @@ type ErrorsHelper2 =
                 }
         }
 
-    static member includeNotFound (?includeName: string) =
+    static member includeNotFound ?includeName =
         {
             RunnerMetaError.meta = {
                 includeNameSet = valueWasSet includeName
             }
             error = IncludeNotFound <| defaultArg includeName ""
+        }
+
+    static member parseError ?message =
+        {
+            ParserMetaError.meta = {
+                messageSet = valueWasSet message
+            }
+            error = ParseError <| defaultArg message ""
+        }
+
+    static member generalError ?message =
+        {
+            GeneralMetaError.meta = {
+                messageSet = valueWasSet message
+            }
+            error = defaultArg message ""
         }
