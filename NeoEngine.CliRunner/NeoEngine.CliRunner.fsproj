@@ -75,8 +75,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TrickyCat.Text.TemplateEngines.NeoEngine\TrickyCat.Text.TemplateEngines.NeoEngine.fsproj">
-      <Name>TrickyCat.Text.TemplateEngines.NeoEngine</Name>
+    <ProjectReference Include="..\NeoEngine\NeoEngine.fsproj">
+      <Name>NeoEngine</Name>
       <Project>{df9792a5-ee3d-4559-819a-cfe3a2dae957}</Project>
       <Private>True</Private>
     </ProjectReference>

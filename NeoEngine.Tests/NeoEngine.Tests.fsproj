@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\NUnit.3.11.0\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.11.0\build\NUnit.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>df9792a5-ee3d-4559-819a-cfe3a2dae957</ProjectGuid>
+    <ProjectGuid>055b98a7-e69c-40bf-8f7f-a9e7b03c68c4</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>TrickyCat.Text.TemplateEngines.NeoEngine</RootNamespace>
-    <AssemblyName>TrickyCat.Text.TemplateEngines.NeoEngine</AssemblyName>
+    <RootNamespace>TrickyCat.Text.TemplateEngines.NeoEngine.Tests</RootNamespace>
+    <AssemblyName>NeoEngine.Tests</AssemblyName>
+    <UseStandardResourceNames>true</UseStandardResourceNames>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <UseStandardResourceNames>True</UseStandardResourceNames>
     <WarningsAsErrors>3239;$(WarningsAsErrors)</WarningsAsErrors>
-    <Name>TrickyCat.Text.TemplateEngines.NeoEngine</Name>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Name>NeoEngine.Tests</Name>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -25,11 +27,9 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).XML</DocumentationFile>
-    <Prefer32Bit>true</Prefer32Bit>
-    <WarningsAsErrors>
-    </WarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors>3239;</WarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -38,9 +38,7 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).XML</DocumentationFile>
-    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
@@ -50,51 +48,29 @@
   </PropertyGroup>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
-    <None Include="DevHelpers\formatDate Helper.fsx" />
-    <Compile Include="Common\Common.fs" />
-    <Compile Include="Common\ResultCommon.fs" />
-    <Compile Include="Errors\Errors.fs" />
-    <Compile Include="Parsers\NeoTemplateParserCore.fs" />
-    <Compile Include="Parsers\NeoTemplateParserApi.fs" />
-    <Compile Include="Interpreters\InterpreterBase.fs" />
-    <Compile Include="Interpreters\EdgeJsInterpreter.fs" />
-    <Compile Include="Runners\TemplateRunner.fs" />
-    <Compile Include="Runners\TemplateRunnerHelpers.fs" />
-    <Compile Include="Services\TemplateService.fs" />
+    <Compile Include="Parser Tests\ParserTestsCommon.fs" />
+    <Compile Include="Parser Tests\TestsForParserOfAStringBeforeNeoCustomization.fs" />
+    <Compile Include="Parser Tests\TestsForParserOfATailOfStringWithNoNeoCustomizationsLeft.fs" />
+    <Compile Include="Parser Tests\WholeNeoTemplateParserTests.fs" />
+    <Compile Include="Parser Tests\NeoInludeParserTests.fs" />
+    <Compile Include="Parser Tests\NeoSubstituteParserTests.fs" />
+    <Compile Include="Parser Tests\NeoBlockParserTests.fs" />
+    <Compile Include="Parser Tests\ParserOptimizationsTests.fs" />
+    <Compile Include="Parser Tests\ParserTransformationsTests.fs" />
+    <Compile Include="Template Engine Tests\ErrorHelpers.fs" />
+    <Compile Include="Template Engine Tests\TemplateEngineTestsCommon.fs" />
+    <Compile Include="Template Engine Tests\TemplateEngineRunsOnTemplatesWithoutCustomizations.fs" />
+    <Compile Include="Template Engine Tests\TemplateEngineRendersSimpleSubstitutions.fs" />
+    <Compile Include="Template Engine Tests\TemplateEngineUsesGlobals.fs" />
+    <Compile Include="Template Engine Tests\TemplateEngineUsesIncludes.fs" />
+    <Compile Include="Template Engine Tests\MembersInIncludesOverrideMembersInGlobalsWithTheSameNameInTemplateEngine.fs" />
+    <Compile Include="Template Engine Tests\TemplateEngineTests.fs" />
+    <Compile Include="Js Globals Tests\formatDateTests.fs" />
     <Compile Include="AssemblyInfo.fs" />
-    <None Include="App.config" />
     <Content Include="packages.config" />
-    <None Include="DevHelpers.fsx" />
-    <EmbeddedResource Include="JS\Global Scope\formatDate.js" />
-    <Content Include="..\packages\EdgeJs.9.3.4\content\edge\double_edge.js">
-      <Link>edge\double_edge.js</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\packages\EdgeJs.9.3.4\content\edge\edge.js">
-      <Link>edge\edge.js</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\packages\EdgeJs.9.3.4\content\edge\x86\edge_nativeclr.node">
-      <Link>edge\x86\edge_nativeclr.node</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\packages\EdgeJs.9.3.4\content\edge\x86\node.dll">
-      <Link>edge\x86\node.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\packages\EdgeJs.9.3.4\content\edge\x64\edge_nativeclr.node">
-      <Link>edge\x64\edge_nativeclr.node</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\packages\EdgeJs.9.3.4\content\edge\x64\node.dll">
-      <Link>edge\x64\node.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="EdgeJs">
-      <HintPath>..\packages\EdgeJs.9.3.4\lib\net45\EdgeJs.dll</HintPath>
-    </Reference>
     <Reference Include="FParsec">
       <HintPath>..\packages\FParsec.1.0.3\lib\net40-client\FParsec.dll</HintPath>
     </Reference>
@@ -104,7 +80,13 @@
     <Reference Include="FSharp.Core">
       <HintPath>..\packages\FSharp.Core.4.6.2\lib\net45\FSharp.Core.dll</HintPath>
     </Reference>
+    <Reference Include="FsUnit.NUnit">
+      <HintPath>..\packages\FsUnit.3.4.0\lib\net46\FsUnit.NUnit.dll</HintPath>
+    </Reference>
     <Reference Include="mscorlib" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -112,6 +94,19 @@
       <Private>True</Private>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NeoEngine\NeoEngine.fsproj">
+      <Name>NeoEngine</Name>
+      <Project>{df9792a5-ee3d-4559-819a-cfe3a2dae957}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\NUnit.3.11.0\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.11.0\build\NUnit.props'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -11,7 +11,7 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyDescription("")>]
 [<assembly: AssemblyConfiguration("")>]
 [<assembly: AssemblyCompany("")>]
-[<assembly: AssemblyProduct("TrickyCat.Text.TemplateEngines.NeoEngine.Tests")>]
+[<assembly: AssemblyProduct("NeoEngine.Tests")>]
 [<assembly: AssemblyCopyright("Copyright © Dmytro Doroshenko 2019")>]
 [<assembly: AssemblyTrademark("")>]
 [<assembly: AssemblyCulture("")>]

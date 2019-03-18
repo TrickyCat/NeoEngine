@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28621.142
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TrickyCat.Text.TemplateEngines.NeoEngine.Tests", "TrickyCat.Text.TemplateEngines.NeoEngine.Tests\TrickyCat.Text.TemplateEngines.NeoEngine.Tests.fsproj", "{055B98A7-E69C-40BF-8F7F-A9E7B03C68C4}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NeoEngine.Tests", "NeoEngine.Tests\NeoEngine.Tests.fsproj", "{055B98A7-E69C-40BF-8F7F-A9E7B03C68C4}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TrickyCat.Text.TemplateEngines.NeoEngine", "TrickyCat.Text.TemplateEngines.NeoEngine\TrickyCat.Text.TemplateEngines.NeoEngine.fsproj", "{DF9792A5-EE3D-4559-819A-CFE3A2DAE957}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NeoEngine", "NeoEngine\NeoEngine.fsproj", "{DF9792A5-EE3D-4559-819A-CFE3A2DAE957}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NeoEngine.ConsumerExample.FSharp", "NeoEngine.ConsumerExample.FSharp\NeoEngine.ConsumerExample.FSharp.fsproj", "{B8B9CAFF-C986-4283-BC79-8DB399436CAE}"
 EndProject
