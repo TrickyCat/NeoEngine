@@ -1,7 +1,7 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.Services
 
 open System.Collections.Generic
-open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi
+open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.ParserApi
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunner
 open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
 open TrickyCat.Text.TemplateEngines.NeoEngine.Errors

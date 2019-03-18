@@ -2,7 +2,7 @@
 
 open ``Parser Tests Common``
 open NUnit.Framework
-open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserCore
+open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.ParserCore
 
 module ``Tests For Parser Of A Non-Empty Tail Of String`` =
     

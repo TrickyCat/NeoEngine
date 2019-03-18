@@ -2,8 +2,8 @@
 
 open NUnit.Framework
 open ``Parser Tests Common``
-open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserCore
-open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi
+open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.ParserCore
+open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.ParserApi
 
 module ``Whole Neo Template Parser Tests`` = 
 

@@ -2,8 +2,8 @@
 
 open FParsec
 open FsUnitTyped
-open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserCore
-open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi
+open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.ParserCore
+open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.ParserApi
 open System
 
 #nowarn "59"

@@ -1,12 +1,12 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.Parsers
 
 open FParsec
-open NeoTemplateParserCore
+open ParserCore
 open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
 open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
 open System
 
-module NeoTemplateParserApi =
+module ParserApi =
     type TemplateNode =
       | Str of string
       | Neo of string

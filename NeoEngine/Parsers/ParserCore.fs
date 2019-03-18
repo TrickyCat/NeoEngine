@@ -3,7 +3,7 @@
 open FParsec
 open System
 
-module NeoTemplateParserCore =
+module ParserCore =
     type TemplateNode' =
             | Str' of string
             | Neo' of string

@@ -54,8 +54,9 @@
     <Compile Include="Common\Common.fs" />
     <Compile Include="Common\ResultCommon.fs" />
     <Compile Include="Errors\Errors.fs" />
-    <Compile Include="Parsers\NeoTemplateParserCore.fs" />
-    <Compile Include="Parsers\NeoTemplateParserApi.fs" />
+    <Compile Include="Parsers\ParserCore.fs" />
+    <Compile Include="Parsers\ParserApi.fs" />
+    <Compile Include="Parsers\ParserHelpers.fs" />
     <Compile Include="Interpreters\InterpreterBase.fs" />
     <Compile Include="Interpreters\EdgeJsInterpreter.fs" />
     <Compile Include="Runners\TemplateRunner.fs" />

@@ -2,8 +2,8 @@
 
 open TrickyCat.Text.TemplateEngines.NeoEngine.Common
 open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
-open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserCore
-open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi
+open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.ParserCore
+open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.ParserApi
 open TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters.InterpreterBase
 open TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters.EdgeJsInterpreter
 open System.Text
