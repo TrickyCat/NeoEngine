@@ -3,15 +3,11 @@
 open ``Template Engine Tests Common``
 open FsUnitTyped
 open NUnit.Framework
-open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunnerHelpers
-open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors
+open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.Helpers
 open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.Common
-open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.Common.ErrorsCommon
-
+open Errors
 
 module ``Template Engine Uses Includes`` =
-
-    type private E = ErrorsHelper
 
     let private successTestData: obj [][] = [|
         [| "<%= greet('World') %>"; renderOk "" |]
@@ -52,13 +48,13 @@ module ``Template Engine Uses Includes`` =
 
 
     let private missingIncludesTestData: obj [][] = [|
-        [| "<%@ include view='someInclude' %><%= greet('World') %>"; E.jsError (JsError) |]
+        [| "<%@ include view='someInclude' %><%= greet('World') %>"; E.includeNotFound () |]
         |]
 
     [<Test; TestCaseSource("missingIncludesTestData")>]
     let ``Template Engine Should Signal On Missing Includes Referenced In Template`` templateString expected =
         renderTemplate emptyGlobals includes emptyContext templateString
-        |> shouldRenderFailWith expected
+        |> shouldFailWith expected
 
 
     let private malformedIncludesTestData: obj [][] = [|
@@ -87,5 +83,5 @@ module ``Template Engine Uses Includes`` =
     [<Test; TestCaseSource("malformedIncludesTestData")>]
     let ``Template Engine Should Signal On Malformed Includes Referenced In Template`` templateString includes =
         renderTemplate emptyGlobals includes emptyContext templateString
-        |> shouldEqual (Ok "")
+        |> shouldFailWith (E.parseError())
 

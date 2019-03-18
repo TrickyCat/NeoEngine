@@ -3,7 +3,7 @@
 open ``Template Engine Tests Common``
 open FsUnitTyped
 open NUnit.Framework
-open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunnerHelpers
+open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.Helpers
 
 module ``Members In Includes Override Members In Globals With The Same Name In Template Engine`` =
 

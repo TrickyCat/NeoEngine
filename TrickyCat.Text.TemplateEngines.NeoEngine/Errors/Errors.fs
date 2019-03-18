@@ -96,7 +96,7 @@ module Errors =
             else
                 None
 
-    let jsGeneralError s = JsError { emptyJsErrorData with errorMessage = Some s }
+    let private jsGeneralError s = JsError { emptyJsErrorData with errorMessage = Some s }
 
     let private jsErrorBuilders = seq {
         yield jsErrorData "ReferenceError" "JS Reference Error" >> Option.map JsReferenceError

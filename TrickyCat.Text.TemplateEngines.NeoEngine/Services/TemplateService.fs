@@ -3,8 +3,8 @@
 open System.Collections.Generic
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunner
-open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors
 open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
+open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
 
 type ITemplateService =
     /// <summary>
@@ -33,7 +33,7 @@ type ITemplateService =
         -> includes: IReadOnlyDictionary<string, string>
         -> template: string
         -> context: KeyValuePair<string, string> seq
-        -> Result<string, RunnerError>
+        -> Result<string, EngineError>
 
 
 type TemplateService() = 
@@ -41,5 +41,4 @@ type TemplateService() =
         member __.RenderTemplateString globals includes template context = 
             template
             |> runParserOnString
-            |> Result.mapError runnerError
             >>= renderTemplateWithDefaultInterpreter globals includes context

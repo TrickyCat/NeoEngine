@@ -3,7 +3,7 @@
 open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
 open NUnit.Framework
 
-module ErrorsCommon2 = 
+module Errors = 
 
     type JsErrorDataMeta = {
         titleSet        : bool
@@ -63,13 +63,16 @@ module ErrorsCommon2 =
             genJsErrorData.failingString actualJsErrorData.failingString
 
 
-        match genJsErrorData.errorMessage, actualJsErrorData.errorMessage with
-        | Some expected, Some actual ->
-            checkString meta.errorMessageSet
-                (fun () -> sprintf "Error's message does not contain expected text.\nExpected: %A\nActual: %A" genJsErrorData.errorMessage actualJsErrorData.errorMessage)
-                expected actual
-        | _ ->
-            fail <| sprintf "JS error message mismatch.\nExpected: %A\nActual: %A" genJsErrorData.errorMessage actualJsErrorData.errorMessage
+        if meta.errorMessageSet then
+            match genJsErrorData.errorMessage, actualJsErrorData.errorMessage with
+            | Some expected, Some actual ->
+                checkString meta.errorMessageSet
+                    (fun () -> sprintf "Error's message does not contain expected text.\nExpected: %A\nActual: %A" genJsErrorData.errorMessage actualJsErrorData.errorMessage)
+                    expected actual
+
+            | None, None                 -> ()
+            | _                          ->
+                fail <| sprintf "JS error message mismatch.\nExpected: %A\nActual: %A" genJsErrorData.errorMessage actualJsErrorData.errorMessage
 
 
     let checkScriptErrors { JsMetaError.meta = meta; error = generatedError } actualJsError =
@@ -128,55 +131,55 @@ module ErrorsCommon2 =
             fail <| sprintf "Error type mismatch.\nExpected: %A\nActual: %A" (expectedError expected) actual
 
 
-    let shouldRenderFailWith testError (renderResult: Result<string, EngineError>) =
+    let shouldFailWith testError (renderResult: Result<string, EngineError>) =
         renderResult
         |> Result.map (fun x -> fail <| sprintf "Unexpected engine success result.\nExpected: %A\nActual: %A" (expectedError testError) x)
         |> Result.mapError (checkErrors testError)
         |> ignore
 
 
-open ErrorsCommon2
+    type ErrorsBuilder =
 
-type ErrorsHelper2 =
-
-    static member jsError (kind, ?title, ?failingString, ?errorMessage) =
-        {
-            JsMetaError.meta = {
-                titleSet         = valueWasSet title
-                failingStringSet = valueWasSet failingString
-                errorMessageSet  = valueWasSet errorMessage
-            }
-            error = kind
-                {
-                    title                    = defaultArg title ""
-                    lineNumber               = 0
-                    errorMessage             = errorMessage
-                    failingString            = defaultArg failingString ""
-                    failingStringPointerHint = ""
-                    stackTrace               = ""
+        static member jsError (kind, ?title, ?failingString, ?errorMessage) =
+            JsMetaError {
+                JsMetaError.meta = {
+                    titleSet         = valueWasSet title
+                    failingStringSet = valueWasSet failingString
+                    errorMessageSet  = valueWasSet errorMessage
                 }
-        }
-
-    static member includeNotFound ?includeName =
-        {
-            RunnerMetaError.meta = {
-                includeNameSet = valueWasSet includeName
+                error = kind
+                    {
+                        title                    = defaultArg title ""
+                        lineNumber               = 0
+                        errorMessage             = errorMessage
+                        failingString            = defaultArg failingString ""
+                        failingStringPointerHint = ""
+                        stackTrace               = ""
+                    }
             }
-            error = IncludeNotFound <| defaultArg includeName ""
-        }
 
-    static member parseError ?message =
-        {
-            ParserMetaError.meta = {
-                messageSet = valueWasSet message
+        static member includeNotFound ?includeName =
+            RunnerMetaError {
+                RunnerMetaError.meta = {
+                    includeNameSet = valueWasSet includeName
+                }
+                error = IncludeNotFound <| defaultArg includeName ""
             }
-            error = ParseError <| defaultArg message ""
-        }
 
-    static member generalError ?message =
-        {
-            GeneralMetaError.meta = {
-                messageSet = valueWasSet message
+        static member parseError ?message =
+            ParserMetaError {
+                ParserMetaError.meta = {
+                    messageSet = valueWasSet message
+                }
+                error = ParseError <| defaultArg message ""
             }
-            error = defaultArg message ""
-        }
+
+        static member generalError ?message =
+            GeneralMetaError {
+                GeneralMetaError.meta = {
+                    messageSet = valueWasSet message
+                }
+                error = defaultArg message ""
+            }
+
+    type E = ErrorsBuilder

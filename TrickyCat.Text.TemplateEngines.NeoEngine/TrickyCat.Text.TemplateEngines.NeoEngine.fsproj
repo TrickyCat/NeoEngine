@@ -58,7 +58,6 @@
     <Compile Include="Parsers\NeoTemplateParserApi.fs" />
     <Compile Include="Interpreters\InterpreterBase.fs" />
     <Compile Include="Interpreters\EdgeJsInterpreter.fs" />
-    <Compile Include="Runners\RunnerErrors.fs" />
     <Compile Include="Runners\TemplateRunner.fs" />
     <Compile Include="Runners\TemplateRunnerHelpers.fs" />
     <Compile Include="Services\TemplateService.fs" />

@@ -44,8 +44,7 @@ module TemplateRunner =
                     | ParserError (ParseError p) ->
                         p
                         |> sprintf "Parse of include failed.\nInclude: %s\nError: %s" viewName
-                        |> ParseError
-                        |> ParserError
+                        |> parseError
                     | x -> x
                     )
                 |> Result.bind (processTemplate'(sb, interpreter, includes))
@@ -84,12 +83,6 @@ module TemplateRunner =
 
     let private processTemplate x = processTemplate' x >> Result.map toString
 
-    let private renderTemplate' interpreter globals includes context template : Result<string, string> =
-        result {
-            do! initInterpreterEnvironmentWithGlobals interpreter globals
-            do! initInterpreterEnvironmentWithContextValues interpreter context
-            return! processTemplate (new StringBuilder(), interpreter, includes) template
-        }
 
     /// <summary>
     /// Renders a template in environment specified by globals with provided includes lookup and context data.
@@ -118,9 +111,14 @@ module TemplateRunner =
     /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors.RunnerError}"/>
     let renderTemplate 
         (interpreter: IInterpreter) (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (context: KeyValuePair<string, string> seq)
-        (template: Template) : Result<string, RunnerError> =
-        renderTemplate' interpreter globals includes context template
-        |> Result.mapError runnerError
+        (template: Template) : Result<string, EngineError> =
+
+        result {
+            do! initInterpreterEnvironmentWithGlobals interpreter globals
+            do! initInterpreterEnvironmentWithContextValues interpreter context
+            return! processTemplate (new StringBuilder(), interpreter, includes) template
+        }
+
 
     /// <summary>
     /// Renders a template in environment specified by globals with provided includes lookup and context data.
@@ -148,6 +146,6 @@ module TemplateRunner =
     /// <returns>Result value with rendered template string in case of success or with the error in case of failure.</returns>
     /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors.RunnerError}"/>
     let renderTemplateWithDefaultInterpreter (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (context: KeyValuePair<string, string> seq)
-        (template: Template): Result<string, RunnerError> =
+        (template: Template): Result<string, EngineError> =
         use interpreter = new EdgeJsInterpreter()
         renderTemplate interpreter globals includes context template

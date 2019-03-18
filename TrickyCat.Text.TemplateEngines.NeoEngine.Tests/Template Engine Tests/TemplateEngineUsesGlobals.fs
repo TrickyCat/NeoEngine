@@ -3,14 +3,12 @@
 open ``Template Engine Tests Common``
 open FsUnitTyped
 open NUnit.Framework
-open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunnerHelpers
-open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors
+open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.Helpers
+open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
 open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.Common
-open ErrorsCommon
+open Errors
 
 module ``Template Engine Uses Globals`` =
-
-    type private E = ErrorsHelper
 
     let private successTestData: obj [][] = [|
         [| "<%= greet('World') %>"; renderOk "Hello, World!" |]
@@ -72,7 +70,7 @@ module ``Template Engine Uses Globals`` =
     [<Test; TestCaseSource("noOverridesForGlobalConstantsTestData")>]
     let ``Template can't override global 'const' bindings`` templateString expected =
         renderTemplate (seq { yield "const c1 = 1;" }) emptyIncludes emptyContext templateString
-        |> shouldRenderFailWith expected
+        |> shouldFailWith expected
 
 
     let private noOverridesForGlobalLetsTestData: obj [][] = [| 
@@ -84,7 +82,7 @@ module ``Template Engine Uses Globals`` =
     [<Test; TestCaseSource("noOverridesForGlobalLetsTestData")>]
     let ``Template can't override global 'let' bindings`` templateString expected =
         renderTemplate (seq { yield "let l1 = 100;" }) emptyIncludes emptyContext templateString
-        |> shouldRenderFailWith expected
+        |> shouldFailWith expected
 
 
 
@@ -96,7 +94,7 @@ module ``Template Engine Uses Globals`` =
     [<Test; TestCaseSource("noOverridesForGlobalVarsTestData")>]
     let ``Template can't override global 'var' bindings with 'let' and 'const'`` templateString expected =
         renderTemplate (seq { yield "var v1 = 100;" }) emptyIncludes emptyContext templateString
-        |> shouldRenderFailWith expected
+        |> shouldFailWith expected
 
 
 

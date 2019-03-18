@@ -4,7 +4,7 @@ open System.Reflection
 open System.IO
 open System.Collections.Generic
 
-module TemplateRunnerHelpers =
+module Helpers =
 
     let private globalFormatDate = lazy (
         let assembly = Assembly.GetExecutingAssembly()

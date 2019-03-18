@@ -1,6 +1,6 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.ConsumerExample.FSharp
 
-open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunnerHelpers
+open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.Helpers
 open System.Collections.Generic
 open Common
 

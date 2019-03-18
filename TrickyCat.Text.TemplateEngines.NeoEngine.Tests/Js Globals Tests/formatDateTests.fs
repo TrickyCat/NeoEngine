@@ -3,7 +3,7 @@
 open FsUnitTyped
 open NUnit.Framework
 open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.``Template Engine Tests Common``
-open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunnerHelpers
+open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.Helpers
 
 module ``'formatDate' Function Tests`` =
 
