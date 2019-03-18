@@ -15,6 +15,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <WarningsAsErrors>3239;$(WarningsAsErrors)</WarningsAsErrors>
     <Name>NeoEngine.Tests</Name>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
@@ -28,7 +29,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).XML</DocumentationFile>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsAsErrors>3239;</WarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -48,6 +48,7 @@
   </PropertyGroup>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
+    <Compile Include="ErrorHelpers.fs" />
     <Compile Include="Parser Tests\ParserTestsCommon.fs" />
     <Compile Include="Parser Tests\TestsForParserOfAStringBeforeNeoCustomization.fs" />
     <Compile Include="Parser Tests\TestsForParserOfATailOfStringWithNoNeoCustomizationsLeft.fs" />
@@ -57,7 +58,6 @@
     <Compile Include="Parser Tests\NeoBlockParserTests.fs" />
     <Compile Include="Parser Tests\ParserOptimizationsTests.fs" />
     <Compile Include="Parser Tests\ParserTransformationsTests.fs" />
-    <Compile Include="Template Engine Tests\ErrorHelpers.fs" />
     <Compile Include="Template Engine Tests\TemplateEngineTestsCommon.fs" />
     <Compile Include="Template Engine Tests\TemplateEngineRunsOnTemplatesWithoutCustomizations.fs" />
     <Compile Include="Template Engine Tests\TemplateEngineRendersSimpleSubstitutions.fs" />

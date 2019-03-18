@@ -23,40 +23,40 @@ module ``Whole Neo Template Parser Tests`` =
             okTemplate [Str "Begin"; Neo "inside"; Str "After"; NeoIncludeView "someview"; Str "after include"; NeoSubstitute "key"; Str "End"] |]
 
         yield [| @"begin<% inside %>after<% if (42 > 21) {%>It's true!!<% } %>end";
-            okTemplate [Str "begin"; Neo "inside"; Str "after"; 
-            NeoIfElseTemplate
-            { 
-                condition = "42 > 21";
-                ifBranchBody = [Str "It's true!!"];
-                elseBranchBody = None
-            };
-            Str "end"] |]
+                    okTemplate [Str "begin"; Neo "inside"; Str "after"; 
+                    NeoIfElseTemplate
+                    { 
+                        condition = "42 > 21";
+                        ifBranchBody = [Str "It's true!!"];
+                        elseBranchBody = None
+                    };
+                    Str "end"] |]
 
         yield [| @"begin<% inside %>after<% if (42 > 21) {%>It's true!!<% } else { %>else body<% } %>end";
-            okTemplate [Str "begin"; Neo "inside"; Str "after"; 
-            NeoIfElseTemplate
-            {
-                condition = "42 > 21"; 
-                ifBranchBody = [Str "It's true!!"];
-                elseBranchBody = Some [Str "else body"]
-            }; 
-            Str "end"] |]
-
-        yield [| @"begin<% inside %>after<% if (42 > 21) {%>It's true!! <% if (a && (b || c)) { %>first nested if<% } %> inside if but after nested if <% } %>end";
-            okTemplate [Str "begin"; Neo "inside"; Str "after"; 
-            NeoIfElseTemplate
-            {
-                condition = "42 > 21"; 
-                ifBranchBody = [Str "It's true!! ";
+                    okTemplate [Str "begin"; Neo "inside"; Str "after"; 
                     NeoIfElseTemplate
                     {
-                        condition = "a && (b || c)"
-                        ifBranchBody = [Str "first nested if"]
+                        condition = "42 > 21"; 
+                        ifBranchBody = [Str "It's true!!"];
+                        elseBranchBody = Some [Str "else body"]
+                    }; 
+                    Str "end"] |]
+
+        yield [| @"begin<% inside %>after<% if (42 > 21) {%>It's true!! <% if (a && (b || c)) { %>first nested if<% } %> inside if but after nested if <% } %>end";
+                    okTemplate [Str "begin"; Neo "inside"; Str "after"; 
+                    NeoIfElseTemplate
+                    {
+                        condition = "42 > 21"; 
+                        ifBranchBody = [Str "It's true!! ";
+                            NeoIfElseTemplate
+                            {
+                                condition = "a && (b || c)"
+                                ifBranchBody = [Str "first nested if"]
+                                elseBranchBody = None
+                            }; Str " inside if but after nested if "];
                         elseBranchBody = None
-                    }; Str " inside if but after nested if "];
-                elseBranchBody = None
-            }; 
-            Str "end"] |]
+                    }; 
+                    Str "end"] |]
 
         //yield [| @"hello<% world"; [ Str @"hello<% world" ] |]
     }
