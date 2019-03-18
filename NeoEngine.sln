@@ -7,7 +7,7 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NeoEngine.Tests", "NeoEngin
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NeoEngine", "NeoEngine\NeoEngine.fsproj", "{DF9792A5-EE3D-4559-819A-CFE3A2DAE957}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NeoEngine.ConsumerExample.FSharp", "NeoEngine.ConsumerExample.FSharp\NeoEngine.ConsumerExample.FSharp.fsproj", "{B8B9CAFF-C986-4283-BC79-8DB399436CAE}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NeoEngine.ConsumerExample.EventsQueueListenerAndEmailSender", "NeoEngine.ConsumerExample.EventsQueueListenerAndEmailSender\NeoEngine.ConsumerExample.EventsQueueListenerAndEmailSender.fsproj", "{B8B9CAFF-C986-4283-BC79-8DB399436CAE}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NeoEngine.CliRunner", "NeoEngine.CliRunner\NeoEngine.CliRunner.fsproj", "{7D73C0E8-B1E2-4FF9-8D03-0FD799F8E695}"
 EndProject

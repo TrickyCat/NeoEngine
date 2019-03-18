@@ -7,11 +7,11 @@ open System.Runtime.InteropServices
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[<assembly: AssemblyTitle("NeoEngine.ConsumerExample.FSharp")>]
+[<assembly: AssemblyTitle("NeoEngine.ConsumerExample.EventsQueueListenerAndEmailSender")>]
 [<assembly: AssemblyDescription("")>]
 [<assembly: AssemblyConfiguration("")>]
 [<assembly: AssemblyCompany("")>]
-[<assembly: AssemblyProduct("NeoEngine.ConsumerExample.FSharp")>]
+[<assembly: AssemblyProduct("NeoEngine.ConsumerExample.EventsQueueListenerAndEmailSender")>]
 [<assembly: AssemblyCopyright("Copyright © Dmytro Doroshenko 2019")>]
 [<assembly: AssemblyTrademark("")>]
 [<assembly: AssemblyCulture("")>]
