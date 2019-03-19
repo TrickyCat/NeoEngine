@@ -8,7 +8,6 @@ open TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters.InterpreterBase
 open TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters.EdgeJsInterpreter
 open System.Text
 open System.Collections.Generic
-//open RunnerErrors
 open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
 
 module TemplateRunner =
@@ -51,7 +50,8 @@ module TemplateRunner =
 
         | NeoSubstitute s ->
             s
-            |> sprintf "(() => { try { return ((%s) || '').toString(); } catch (exn) { return ''; }})();"
+            //|> sprintf "(() => { try { return ((%s) || '').toString(); } catch (exn) { return ''; }})();"
+            |> sprintf "((%s) || '').toString();"
             |> interpreter.Eval
             |> Result.map sb.Append
 
