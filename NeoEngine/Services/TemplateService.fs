@@ -4,7 +4,7 @@ open System.Collections.Generic
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunner
 open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
-open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
+open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors
 
 type ITemplateService =
     /// <summary>

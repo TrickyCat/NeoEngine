@@ -1,7 +1,19 @@
-﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine
+﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults
 
 open System
 open TrickyCat.Text.TemplateEngines.NeoEngine.Common
+
+module Successes =
+
+    type WarnedOk<'a> = {
+        result: 'a
+        warnings: string list
+    }
+
+    type EngineOk<'a> =
+    | EngineOk of 'a
+    | WarnedOk of WarnedOk<'a>
+
 
 module Errors =
 
@@ -120,3 +132,9 @@ module Errors =
     let includeNotFound = IncludeNotFound >> RunnerError
 
     let error = GeneralError
+
+
+open Successes
+open Errors
+
+type EngineResult = Result<EngineOk<string>, EngineError>

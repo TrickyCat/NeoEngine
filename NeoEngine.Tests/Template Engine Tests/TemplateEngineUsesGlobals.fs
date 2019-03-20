@@ -4,7 +4,7 @@ open ``Template Engine Tests Common``
 open FsUnitTyped
 open NUnit.Framework
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.Helpers
-open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
+open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors
 open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.Common
 open Errors
 

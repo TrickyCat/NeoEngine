@@ -3,7 +3,7 @@
 open FParsec
 open NeoTemplateParserCore
 open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
-open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
+open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors
 open System
 
 module NeoTemplateParserApi =

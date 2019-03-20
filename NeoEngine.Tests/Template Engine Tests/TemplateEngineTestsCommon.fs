@@ -1,7 +1,7 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests
 
 open TrickyCat.Text.TemplateEngines.NeoEngine.Services
-open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
+open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors
 
 module ``Template Engine Tests Common`` = 
     let private templateSvc = TemplateService() :> ITemplateService

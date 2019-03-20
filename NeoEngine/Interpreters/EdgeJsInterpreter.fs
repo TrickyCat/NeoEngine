@@ -4,7 +4,7 @@ open InterpreterBase
 open EdgeJs
 open System
 open TrickyCat.Text.TemplateEngines.NeoEngine.Common
-open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
+open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors
 
 module EdgeJsInterpreter =
     type EdgeJsInterpreter() =

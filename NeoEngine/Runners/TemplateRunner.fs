@@ -8,11 +8,21 @@ open TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters.InterpreterBase
 open TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters.EdgeJsInterpreter
 open System.Text
 open System.Collections.Generic
-open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
+open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors
+open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Successes
 
 module TemplateRunner =
 
     type private S = System.String
+
+    let handleExpressionResult (x : obj) =
+        match x with
+        | :? string as s -> s |> Ok
+        | :? bool as b   -> b |> sprintf "%b" |> Ok
+        | :? int as i    -> i |> sprintf "%i" |> Ok
+        | :? double as d -> d |> sprintf "%f" |> Ok
+        | _              -> x |> sprintf "Unexpected expression result type: %A" |> error |> Error
+
 
     let rec private processTemplate' (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>) =
              List.fold
@@ -50,9 +60,8 @@ module TemplateRunner =
 
         | NeoSubstitute s ->
             s
-            //|> sprintf "(() => { try { return ((%s) || '').toString(); } catch (exn) { return ''; }})();"
-            |> sprintf "((%s) || '').toString();"
             |> interpreter.Eval
+            >>= handleExpressionResult
             |> Result.map sb.Append
 
         | NeoIfElseTemplate {condition = condition; ifBranchBody = ifBranchBody; elseBranchBody = maybeElseBranchBody} ->

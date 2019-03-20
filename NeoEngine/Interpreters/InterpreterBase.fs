@@ -1,7 +1,7 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters
 
 open System
-open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
+open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors
 
 module InterpreterBase =
     // TODO: specify other use cases!
