@@ -9,19 +9,18 @@ open TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters.EdgeJsInterpreter
 open System.Text
 open System.Collections.Generic
 open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors
-open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Successes
 
 module TemplateRunner =
 
     type private S = System.String
 
-    let handleExpressionResult (x : obj) =
+    let handleExpressionResult expression (x : obj) =
         match x with
         | :? string as s -> s |> Ok
         | :? bool as b   -> b |> sprintf "%b" |> Ok
         | :? int as i    -> i |> sprintf "%i" |> Ok
         | :? double as d -> d |> sprintf "%f" |> Ok
-        | _              -> x |> sprintf "Unexpected expression result type: %A" |> error |> Error
+        | _              -> x |> sprintf "Unexpected expression result type.\nExpression: %s\nCalculated value: %A" expression |> error |> Error
 
 
     let rec private processTemplate' (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>) =
@@ -41,12 +40,7 @@ module TemplateRunner =
 
         | NeoIncludeView viewName ->
             let (viewFound, viewTemplateString) = includes.TryGetValue(viewName)
-            if not viewFound then
-                viewName
-                |> sprintf "Include not found: %s."
-                |> includeNotFound
-                |> Error
-            else
+            if viewFound then
                 viewTemplateString
                 |> runParserOnString
                 |> Result.mapError (function
@@ -57,11 +51,16 @@ module TemplateRunner =
                     | x -> x
                     )
                 |> Result.bind (processTemplate'(sb, interpreter, includes))
+            else
+                viewName
+                |> sprintf "Include not found: %s."
+                |> includeNotFound
+                |> Error
 
         | NeoSubstitute s ->
             s
             |> interpreter.Eval
-            >>= handleExpressionResult
+            >>= handleExpressionResult s
             |> Result.map sb.Append
 
         | NeoIfElseTemplate {condition = condition; ifBranchBody = ifBranchBody; elseBranchBody = maybeElseBranchBody} ->
