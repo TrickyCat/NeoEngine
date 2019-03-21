@@ -4,7 +4,7 @@ open System
 open EventsQueue
 open Common
 open FakeEmailSender
-open TrickyCat.Text.TemplateEngines.NeoEngine.Common
+open TrickyCat.Text.TemplateEngines.NeoEngine.Utils
 
 module SimpleEventsProcessor =
 

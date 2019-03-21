@@ -1,13 +1,14 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.Runners
 
-open TrickyCat.Text.TemplateEngines.NeoEngine.Common
+open System.Collections.Generic
+open System.Text
+open TrickyCat.Text.TemplateEngines.NeoEngine.Utils
 open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserCore
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi
 open TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters.InterpreterBase
 open TrickyCat.Text.TemplateEngines.NeoEngine.Interpreters.EdgeJsInterpreter
-open System.Text
-open System.Collections.Generic
+open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults
 open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors
 
 module TemplateRunner =
@@ -19,7 +20,7 @@ module TemplateRunner =
         | :? string as s -> s |> Ok
         | :? bool as b   -> b |> sprintf "%b" |> Ok
         | :? int as i    -> i |> sprintf "%i" |> Ok
-        | :? double as d -> d |> sprintf "%f" |> Ok
+        | :? double as d -> d |> sprintf "%g" |> Ok
         | _              -> x |> sprintf "Unexpected expression result type.\nExpression: %s\nCalculated value: %A" expression |> error |> Error
 
 
@@ -119,7 +120,7 @@ module TemplateRunner =
     /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors.RunnerError}"/>
     let renderTemplate 
         (interpreter: IInterpreter) (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (context: KeyValuePair<string, string> seq)
-        (template: Template) : Result<string, EngineError> =
+        (template: Template) : EngineResult =
 
         result {
             do! initInterpreterEnvironmentWithGlobals interpreter globals
@@ -154,6 +155,6 @@ module TemplateRunner =
     /// <returns>Result value with rendered template string in case of success or with the error in case of failure.</returns>
     /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors.RunnerError}"/>
     let renderTemplateWithDefaultInterpreter (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (context: KeyValuePair<string, string> seq)
-        (template: Template): Result<string, EngineError> =
+        (template: Template): EngineResult =
         use interpreter = new EdgeJsInterpreter()
         renderTemplate interpreter globals includes context template

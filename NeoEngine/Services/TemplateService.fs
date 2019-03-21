@@ -4,7 +4,7 @@ open System.Collections.Generic
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunner
 open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
-open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors
+open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults
 
 type ITemplateService =
     /// <summary>
@@ -33,7 +33,7 @@ type ITemplateService =
         -> includes: IReadOnlyDictionary<string, string>
         -> template: string
         -> context: KeyValuePair<string, string> seq
-        -> Result<string, EngineError>
+        -> EngineResult
 
 
 type TemplateService() = 

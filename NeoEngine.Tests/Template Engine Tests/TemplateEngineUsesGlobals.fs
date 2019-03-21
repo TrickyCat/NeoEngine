@@ -12,19 +12,13 @@ module ``Template Engine Uses Globals`` =
 
     let private successTestData: obj [][] = [|
         [| "<%= greet('World') %>"; renderOk "Hello, World!" |]
-        [| "<%= f() %>"; renderOk "" |]
-        [| "<%= f(x) %>"; renderOk "" |]
-        [| "<%= f(100) %>"; renderOk "" |]
         [| "<%= foo(11) %>"; renderOk "221" |]
         [| "<%= greet(foo(10)) %>"; renderOk "Hello, 200!" |]
-        [| "<%= greet(foo(10)) + '' + f() %>"; renderOk "" |]
-        [| "<%= greet(foo(10)) %><%= f() %><%= f(x) %>"; renderOk "Hello, 200!" |]
 
         [| "<%= magicNumber %>"; renderOk "7" |]
         [| "<%= magicNumber2 %>"; renderOk "10" |]
         [| "<%= magicNumber3 %>"; renderOk "3" |]
         [| "<%= magicNumber4 %>"; renderOk "9" |]
-
     |]
 
     let private globals = seq {
@@ -135,10 +129,10 @@ module ``Template Engine Uses Globals`` =
     [<Test; TestCaseSource("canLookupGlobalValues")>]
     let ``Template's code can lookup global values`` templateString expected =
         renderTemplate (seq { yield """
-        var v1 = 100;
+        var   v1 = 100;
         const c1 = 200;
-        let l1 = 300;
-        v2 = 400;
+        let   l1 = 300;
+              v2 = 400;
         function f(){}
         """ }) emptyIncludes emptyContext templateString
         |> shouldEqual expected
