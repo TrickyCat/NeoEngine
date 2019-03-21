@@ -14,6 +14,6 @@ module GreetOnSite =
     """
 
     let private templateRenderer: KeyValuePair<string, string> seq -> Result<string, _> =
-        renderSvc.RenderTemplateString emptyGlobals emptyIncludes template
+        renderSvc.RenderTemplateString defaultGlobals emptyIncludes template
 
     let renderWithContext = templateRenderer
