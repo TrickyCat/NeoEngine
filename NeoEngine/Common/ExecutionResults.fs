@@ -85,11 +85,12 @@ module Errors =
                     let hint = lines.[2]
 
                     let errorMessage =
-                        if lines.[3].Contains(":") then                         //TODO: check index!!!!!!
+                        if lines.Length > 3 && lines.[3].Contains(":") then
                             lines.[3].Split ':' |> Array.last |> trim |> Some
                         else
                             None
                     let st = if lines.Length > 3 then String.Join("\n", lines.[4..] |> Array.map trim) else ""
+
                     Some { title = title; lineNumber = lineNumber; errorMessage = errorMessage; failingString = failingString; failingStringPointerHint = hint; stackTrace = st }
                 else
                     None
