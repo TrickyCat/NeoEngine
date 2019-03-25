@@ -89,7 +89,7 @@ module Errors =
                             lines.[3].Split ':' |> Array.last |> trim |> Some
                         else
                             None
-                    let st = if lines.Length > 3 then String.Join("\n", lines.[4..] |> Array.map trim) else ""
+                    let st = if lines.Length > 4 then String.Join("\n", lines.[4..] |> Array.map trim) else ""
 
                     Some { title = title; lineNumber = lineNumber; errorMessage = errorMessage; failingString = failingString; failingStringPointerHint = hint; stackTrace = st }
                 else
