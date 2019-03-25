@@ -15,7 +15,7 @@ module TemplateRunner =
 
     type private S = System.String
 
-    let handleExpressionResult expression (x : obj) =
+    let private handleExpressionResult expression (x : obj) =
         match x with
         | :? string as s -> s |> Ok
         | :? bool as b   -> b |> sprintf "%b" |> Ok
@@ -26,7 +26,7 @@ module TemplateRunner =
 
     let rec private processTemplate' (sb: StringBuilder, interpreter: IInterpreter, includes: IReadOnlyDictionary<string, string>) =
              List.fold
-               (fun state node -> state |> Result.bind (fun sb -> processTemplateNode (sb, interpreter, includes) node))
+               (fun state node -> state >>= (fun sb -> processTemplateNode (sb, interpreter, includes) node))
                (Ok sb)
 
     /// <summary>
@@ -51,7 +51,7 @@ module TemplateRunner =
                         |> parseError
                     | x -> x
                     )
-                |> Result.bind (processTemplate'(sb, interpreter, includes))
+                >>= (processTemplate'(sb, interpreter, includes))
             else
                 viewName
                 |> sprintf "Include not found: %s."
@@ -72,7 +72,7 @@ module TemplateRunner =
                 | true  -> ifBranchBody
                 | false -> Option.defaultValue [] maybeElseBranchBody
             )
-            |> Result.bind (processTemplate'(sb, interpreter, includes))
+            >>= processTemplate'(sb, interpreter, includes)
 
     /// <summary>
     /// Initialize the script execution environment inside interpreter session with with specified globals.
@@ -117,7 +117,7 @@ module TemplateRunner =
     /// Template's AST.
     /// </param>
     /// <returns>Result value with rendered template string in case of success or with the error in case of failure.</returns>
-    /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors.RunnerError}"/>
+    /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors.EngineError}"/>
     let renderTemplate 
         (interpreter: IInterpreter) (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (context: KeyValuePair<string, string> seq)
         (template: Template) : EngineResult =
@@ -153,7 +153,7 @@ module TemplateRunner =
     /// Template's AST.
     /// </param>
     /// <returns>Result value with rendered template string in case of success or with the error in case of failure.</returns>
-    /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors.RunnerError}"/>
+    /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors.EngineError}"/>
     let renderTemplateWithDefaultInterpreter (globals: string seq) (includes: IReadOnlyDictionary<string, string>) (context: KeyValuePair<string, string> seq)
         (template: Template): EngineResult =
         use interpreter = new EdgeJsInterpreter()

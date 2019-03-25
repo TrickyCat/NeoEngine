@@ -27,7 +27,7 @@ type ITemplateService =
     /// Not null.
     /// </param>
     /// <returns>Result value with rendered template string in case of success or with the error in case of failure.</returns>
-    /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors.RunnerError}"/>
+    /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors.EngineError}"/>
     abstract RenderTemplateString:
         globals: string seq
         -> includes: IReadOnlyDictionary<string, string>

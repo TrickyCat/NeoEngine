@@ -5,6 +5,7 @@ open EdgeJs
 open System
 open TrickyCat.Text.TemplateEngines.NeoEngine.Utils
 open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors
+open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
 
 module EdgeJsInterpreter =
     type EdgeJsInterpreter() =
@@ -53,7 +54,7 @@ module EdgeJsInterpreter =
             member __.Eval<'a> jsString =
                 jsString
                 |> exec false
-                |> Result.bind (fun x ->
+                >>= (fun x ->
                     try
                         Convert.ChangeType(x, typeof<'a>) :?> 'a |> Ok 
                     with

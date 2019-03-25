@@ -56,9 +56,9 @@ module ``Template Engine Uses Globals`` =
 
     let private noOverridesForGlobalConstantsTestData: obj [][] = [| 
         [| "<% const c1 = 2; %>"; E.jsError (JsSyntaxError) |]
-        [| "<% let c1 = 2; %>"; E.jsError (JsSyntaxError) |]
-        [| "<% var c1 = 2; %>"; E.jsError (JsSyntaxError) |]
-        [| "<% c1 = 2; %>"; E.jsError (JsTypeError) |]
+        [| "<% let c1 = 2; %>";   E.jsError (JsSyntaxError) |]
+        [| "<% var c1 = 2; %>";   E.jsError (JsSyntaxError) |]
+        [| "<% c1 = 2; %>";       E.jsError (JsTypeError) |]
     |]
 
     [<Test; TestCaseSource("noOverridesForGlobalConstantsTestData")>]
