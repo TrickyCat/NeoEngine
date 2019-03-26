@@ -32,7 +32,7 @@ module ``Template Engine Uses Includes`` =
 
     [<Test; TestCaseSource("successTestData")>]
     let ``Template Engine Should Use Includes Referenced In Template`` templateString expected =
-        test <@ expected = renderTemplate emptyGlobals includes emptyContext templateString @>
+        expected =! renderTemplate emptyGlobals includes emptyContext templateString
 
 
 
@@ -48,7 +48,7 @@ module ``Template Engine Uses Includes`` =
 
     [<Test; TestCaseSource("orderOfIncludesTestData")>]
     let ``Order of Include References in Template Matters`` templateString expected =
-        test <@ expected = renderTemplate emptyGlobals includes emptyContext templateString @>
+        expected =! renderTemplate emptyGlobals includes emptyContext templateString
 
 
 
@@ -97,7 +97,7 @@ module ``Template Engine Uses Includes`` =
 
     [<Test; TestCaseSource("noNestedScopesForIncludesTestData")>]
     let ``Template Engine Does Not Currently Support Nested Scopes For Include References`` templateString expected =
-        test <@ expected = renderTemplate emptyGlobals includes emptyContext templateString @>
+        expected =! renderTemplate emptyGlobals includes emptyContext templateString
 
 
 

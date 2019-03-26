@@ -25,7 +25,7 @@ module ``Parser Tests Common`` =
 
 
     let runParserOnSuccessfulData parserUnderTest (templateString, expected) =
-        test <@ expected = runParser parserUnderTest templateString @>
+        expected =! runParser parserUnderTest templateString
 
 
     let runParserOnUnsupportedData parserUnderTest templateString =

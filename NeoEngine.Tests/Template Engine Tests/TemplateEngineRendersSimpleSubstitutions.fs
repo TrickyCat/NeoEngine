@@ -52,7 +52,7 @@ module ``Template Engine Renders Simple Substitutions`` =
 
     [<Test; TestCaseSource("successTestData")>]
     let ``Template Engine Should Correctly Render Simple Substitutions When Context Data Is Empty`` templateString expected =
-        test <@ expected = renderTemplate emptyGlobals emptyIncludes emptyContext templateString @>
+        expected =! renderTemplate emptyGlobals emptyIncludes emptyContext templateString
 
 
     let private failingExpressionsTestData: obj [][] = [|

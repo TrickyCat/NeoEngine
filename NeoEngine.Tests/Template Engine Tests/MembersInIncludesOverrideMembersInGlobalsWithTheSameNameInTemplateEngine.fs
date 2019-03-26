@@ -38,4 +38,4 @@ module ``Members In Includes Override Members In Globals With The Same Name In T
 
     [<Test; TestCaseSource("successTestData")>]
     let ``Template Engine Should Allow Members In Includes To Override Members In Globals With The Same Name`` templateString expected =
-        test <@ expected = renderTemplate globals includes emptyContext templateString @>
+        expected =! renderTemplate globals includes emptyContext templateString

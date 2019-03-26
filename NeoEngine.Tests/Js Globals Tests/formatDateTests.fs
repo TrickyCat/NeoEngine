@@ -297,4 +297,4 @@ module ``'formatDate' Function Tests`` =
 
     [<Test; TestCaseSource("formatDateFunctionSpec")>]
     let ``'formatDate' function complies with Neo's functionality`` templateString expected =
-        test <@ expected = renderTemplate globals emptyIncludes emptyContext templateString @>
+        expected =! renderTemplate globals emptyIncludes emptyContext templateString

@@ -135,5 +135,5 @@ module ``Parser Transformations Tests`` =
 
     [<Test; TestCaseSource("successTestData")>]
     let ``Parser Properly Transforms AST from low- to a higher-level one.`` inputAst expected =
-        test <@ expected = toTemplate inputAst @>
+        expected =! toTemplate inputAst
 

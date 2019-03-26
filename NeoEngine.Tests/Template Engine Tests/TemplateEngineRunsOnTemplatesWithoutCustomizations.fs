@@ -17,4 +17,4 @@ module ``Template Engine Runs On Templates Without Customizations`` =
     
     [<Test; TestCaseSource("successTestData")>]
     let ``Template Engine Should Run On Templates Without Customizations And Render Result Should Be Identical To The Template Itself`` templateString =
-        test <@ Ok templateString = renderTemplate emptyGlobals emptyIncludes emptyContext templateString @>
+        Ok templateString =! renderTemplate emptyGlobals emptyIncludes emptyContext templateString
