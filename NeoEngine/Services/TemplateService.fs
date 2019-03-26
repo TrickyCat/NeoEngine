@@ -15,7 +15,7 @@ type ITemplateService =
     /// Not null.
     /// </param>
     /// <param name="includes">
-    /// A lookup dictionary for resolution of includes being referenced from the template. Syntactically they are also templates.
+    /// A lookup dictionary for resolution of includes being referenced within the template and\or include. Syntactically they are also templates.
     /// Not null.
     /// </param>
     /// <param name="template">
