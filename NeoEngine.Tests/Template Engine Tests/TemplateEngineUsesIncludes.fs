@@ -1,11 +1,11 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests
 
 open ``Template Engine Tests Common``
-open FsUnitTyped
 open NUnit.Framework
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.Helpers
 open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.Common
 open Errors
+open Swensen.Unquote
 
 module ``Template Engine Uses Includes`` =
 
@@ -32,8 +32,7 @@ module ``Template Engine Uses Includes`` =
 
     [<Test; TestCaseSource("successTestData")>]
     let ``Template Engine Should Use Includes Referenced In Template`` templateString expected =
-        renderTemplate emptyGlobals includes emptyContext templateString
-        |> shouldEqual expected
+        test <@ expected = renderTemplate emptyGlobals includes emptyContext templateString @>
 
 
 
@@ -49,8 +48,7 @@ module ``Template Engine Uses Includes`` =
 
     [<Test; TestCaseSource("orderOfIncludesTestData")>]
     let ``Order of Include References in Template Matters`` templateString expected =
-        renderTemplate emptyGlobals includes emptyContext templateString
-        |> shouldEqual expected
+        test <@ expected = renderTemplate emptyGlobals includes emptyContext templateString @>
 
 
 
@@ -99,8 +97,7 @@ module ``Template Engine Uses Includes`` =
 
     [<Test; TestCaseSource("noNestedScopesForIncludesTestData")>]
     let ``Template Engine Does Not Currently Support Nested Scopes For Include References`` templateString expected =
-        renderTemplate emptyGlobals includes emptyContext templateString
-        |> shouldEqual expected
+        test <@ expected = renderTemplate emptyGlobals includes emptyContext templateString @>
 
 
 

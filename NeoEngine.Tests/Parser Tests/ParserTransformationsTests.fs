@@ -5,6 +5,7 @@ open FsUnitTyped
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserCore
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.NeoTemplateParserApi
 open ``Parser Tests Common``
+open Swensen.Unquote
 
 module ``Parser Transformations Tests`` =
 
@@ -134,6 +135,5 @@ module ``Parser Transformations Tests`` =
 
     [<Test; TestCaseSource("successTestData")>]
     let ``Parser Properly Transforms AST from low- to a higher-level one.`` inputAst expected =
-        toTemplate inputAst |> shouldEqual expected
-
+        test <@ expected = toTemplate inputAst @>
 

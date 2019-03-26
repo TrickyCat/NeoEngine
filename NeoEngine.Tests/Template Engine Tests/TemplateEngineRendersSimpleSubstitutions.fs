@@ -1,12 +1,12 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests
 
 open ``Template Engine Tests Common``
-open FsUnitTyped
 open NUnit.Framework
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.Helpers
 open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.Common
 open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors
 open Errors
+open Swensen.Unquote
 
 
 module ``Template Engine Renders Simple Substitutions`` =
@@ -52,8 +52,7 @@ module ``Template Engine Renders Simple Substitutions`` =
 
     [<Test; TestCaseSource("successTestData")>]
     let ``Template Engine Should Correctly Render Simple Substitutions When Context Data Is Empty`` templateString expected =
-        renderTemplate emptyGlobals emptyIncludes emptyContext templateString
-        |> shouldEqual expected
+        test <@ expected = renderTemplate emptyGlobals emptyIncludes emptyContext templateString @>
 
 
     let private failingExpressionsTestData: obj [][] = [|

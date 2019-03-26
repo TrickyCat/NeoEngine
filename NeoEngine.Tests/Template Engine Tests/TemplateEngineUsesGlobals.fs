@@ -1,12 +1,12 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests
 
 open ``Template Engine Tests Common``
-open FsUnitTyped
 open NUnit.Framework
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.Helpers
 open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors
 open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.Common
 open Errors
+open Swensen.Unquote
 
 module ``Template Engine Uses Globals`` =
 
@@ -50,8 +50,7 @@ module ``Template Engine Uses Globals`` =
 
     [<Test; TestCaseSource("successTestData")>]
     let ``Template Engine Should Use Globals`` templateString expected =
-        renderTemplate globals emptyIncludes emptyContext templateString
-        |> shouldEqual expected
+        test <@ expected = renderTemplate globals emptyIncludes emptyContext templateString @>
 
 
     let private noOverridesForGlobalConstantsTestData: obj [][] = [| 
@@ -100,8 +99,7 @@ module ``Template Engine Uses Globals`` =
 
     [<Test; TestCaseSource("overridesForGlobalVarsTestData")>]
     let ``Template can override global 'var' bindings with 'var' and 'implicit var'`` templateString expected =
-        renderTemplate (seq { yield "var v1 = 1;" }) emptyIncludes emptyContext templateString
-        |> shouldEqual expected
+        test <@ expected = renderTemplate (seq { yield "var v1 = 1;" }) emptyIncludes emptyContext templateString @>
 
 
 
@@ -113,8 +111,7 @@ module ``Template Engine Uses Globals`` =
 
     [<Test; TestCaseSource("overridesForGlobalImplicitVarsTestData")>]
     let ``Template can override global implicit 'var' bindings with 'var' and 'implicit var'`` templateString expected =
-        renderTemplate (seq { yield "v1 = 1;" }) emptyIncludes emptyContext templateString
-        |> shouldEqual expected
+        test <@ expected = renderTemplate (seq { yield "v1 = 1;" }) emptyIncludes emptyContext templateString @>
 
 
 
@@ -128,11 +125,12 @@ module ``Template Engine Uses Globals`` =
 
     [<Test; TestCaseSource("canLookupGlobalValues")>]
     let ``Template's code can lookup global values`` templateString expected =
-        renderTemplate (seq { yield """
-        var   v1 = 100;
-        const c1 = 200;
-        let   l1 = 300;
-              v2 = 400;
-        function f(){}
-        """ }) emptyIncludes emptyContext templateString
-        |> shouldEqual expected
+        test <@ 
+                expected = renderTemplate (seq { yield """
+                        var   v1 = 100;
+                        const c1 = 200;
+                        let   l1 = 300;
+                                v2 = 400;
+                        function f(){}
+                        """ }) emptyIncludes emptyContext templateString
+        @>

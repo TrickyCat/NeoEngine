@@ -93,6 +93,9 @@
     <Reference Include="System.ValueTuple">
       <Private>True</Private>
     </Reference>
+    <Reference Include="Unquote">
+      <HintPath>..\packages\Unquote.4.0.0\lib\net45\Unquote.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NeoEngine\NeoEngine.fsproj">

@@ -1,9 +1,9 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.Tests.JsGlobalsTests
 
-open FsUnitTyped
 open NUnit.Framework
 open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.``Template Engine Tests Common``
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.Helpers
+open Swensen.Unquote
 
 module ``'formatDate' Function Tests`` =
 
@@ -294,8 +294,7 @@ module ``'formatDate' Function Tests`` =
         """
         }
 
+
     [<Test; TestCaseSource("formatDateFunctionSpec")>]
     let ``'formatDate' function complies with Neo's functionality`` templateString expected =
-        renderTemplate globals emptyIncludes emptyContext templateString
-        |> shouldEqual expected
-    
+        test <@ expected = renderTemplate globals emptyIncludes emptyContext templateString @>
