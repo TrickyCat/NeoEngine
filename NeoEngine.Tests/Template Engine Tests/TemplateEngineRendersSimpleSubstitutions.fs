@@ -47,6 +47,11 @@ module ``Template Engine Renders Simple Substitutions`` =
         [| "<%= 2 - 1 %>"; renderOk "1" |]
         [| "<% function f(x) { return (x + 2) * 3; } %>Hello<% function double(x) { return 2 * x;} %> <%= double(f(5)) %>!"; renderOk "Hello 42!" |]
         [| "<% function f(x) { return x + 10; } %><%= f(1) %> <% function f(x) { return x - 200; } %><%= f(300) %>"; renderOk "11 100"|]
+        
+        [| "<%= 'परिवहन' %>"; renderOk "परिवहन" |]
+        [| "<% const s = 'परिवहन'; %><%= s %>"; renderOk "परिवहन" |]
+        [| "<%= '復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮' %>"; renderOk "復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮" |]
+        [| "<% const s = '復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮'; %><%= s %>"; renderOk "復案ぼへびえ焦集エメシホ方知経ヨマヒモ縮" |]
     |]
 
 
