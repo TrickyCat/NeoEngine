@@ -3,7 +3,8 @@
 open System
 open System.Text
 
-module Common =
+module Utils =
+
     let nl = Environment.NewLine
 
     let toString x = x.ToString()

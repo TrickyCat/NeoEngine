@@ -51,9 +51,9 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <None Include="DevHelpers\formatDate Helper.fsx" />
-    <Compile Include="Common\Common.fs" />
+    <Compile Include="Common\Utils.fs" />
     <Compile Include="Common\ResultCommon.fs" />
-    <Compile Include="Errors\Errors.fs" />
+    <Compile Include="Common\ExecutionResults.fs" />
     <Compile Include="Parsers\ParserCore.fs" />
     <Compile Include="Parsers\ParserApi.fs" />
     <Compile Include="Parsers\ParserHelpers.fs" />

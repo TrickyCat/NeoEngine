@@ -1,29 +1,18 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests
 
 open ``Template Engine Tests Common``
-open FsUnitTyped
 open NUnit.Framework
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.Helpers
 open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.Common
 open Errors
+open Swensen.Unquote
 
 module ``Template Engine Uses Includes`` =
 
     let private successTestData: obj [][] = [|
-        [| "<%= greet('World') %>"; renderOk "" |]
         [| "<%@ include view='include1' %><%= greet('World') %>"; renderOk "Hello, World!" |]
-        [| "<%@ include view='include1' %><%@ include view='include2' %><%= greet('World') %>"; renderOk "Hello, World! (from include2)" |]
-        [| "<%@ include view='include2' %><%@ include view='include1' %><%= greet('World') %>"; renderOk "Hello, World!" |]
-        [| "<%= greet('World') %><%@ include view='include1' %><%= greet('World') %> <%@ include view='include2' %><%= greet('World') %>";
-            renderOk "Hello, World! Hello, World! (from include2)" |]
-        
-
-        //[| "<%@ include view='include1' %><%@ include view='include2' %><%= magicNumber %>"; "" |]
-        [| "<%= magicNumber %>"; renderOk "" |]
-        //[| "<%@ include view='include1' %><%= magicNumber %>"; "42" |]
-        //[| "<%@ include view='include2' %><%= magicNumber %>"; "" |]
+        [| "<%@ include view='include2' %><%= greet('World') %>"; renderOk "Hello, World! (from include2)" |]
     |]
-
 
 
     let private includes =
@@ -43,8 +32,73 @@ module ``Template Engine Uses Includes`` =
 
     [<Test; TestCaseSource("successTestData")>]
     let ``Template Engine Should Use Includes Referenced In Template`` templateString expected =
-        renderTemplate emptyGlobals includes emptyContext templateString
-        |> shouldEqual expected
+        expected =! renderTemplate emptyGlobals includes emptyContext templateString
+
+
+
+    let private orderOfIncludesTestData: obj [][] = [|
+        [| "<%@ include view='include1' %><%@ include view='include2' %><%= greet('World') %>"; renderOk "Hello, World! (from include2)" |]
+        [| "<%@ include view='include2' %><%@ include view='include1' %><%= greet('World') %>"; renderOk "Hello, World!" |]
+
+        [| "<%@ include view='include1' %><%= greet('World') %> <%@ include view='include2' %><%= greet('World') %>";
+            renderOk "Hello, World! Hello, World! (from include2)" |]
+        [| "<%@ include view='include2' %><%= greet('World') %> <%@ include view='include1' %><%= greet('World') %>";
+            renderOk "Hello, World! (from include2) Hello, World!" |]
+    |]
+
+    [<Test; TestCaseSource("orderOfIncludesTestData")>]
+    let ``Order of Include References in Template Matters`` templateString expected =
+        expected =! renderTemplate emptyGlobals includes emptyContext templateString
+
+
+
+    let private noNestedScopesForIncludesTestData: obj [][] = [|
+        [| """
+        <%@ include view='include1' %>
+        <%= greet('World') %>
+        <% if (true) { %>
+            <%@ include view='include2' %>
+            <%= greet('World') %>
+        <% } %>
+        <%= greet('World') %>
+        """; renderOk """
+        
+        Hello, World!
+        
+            
+            Hello, World! (from include2)
+        
+        Hello, World! (from include2)
+        """ |]
+
+
+
+        [| """
+        <%@ include view='include1' %>
+        <%= greet('World') %>
+        <% if (false) { %>
+            42
+        <% } else { %>
+            <%@ include view='include2' %>
+            <%= greet('World') %>
+        <% } %>
+        <%= greet('World') %>
+        """; renderOk """
+        
+        Hello, World!
+        
+            
+            Hello, World! (from include2)
+        
+        Hello, World! (from include2)
+        """ |]
+
+    |]
+
+    [<Test; TestCaseSource("noNestedScopesForIncludesTestData")>]
+    let ``Template Engine Does Not Currently Support Nested Scopes For Include References`` templateString expected =
+        expected =! renderTemplate emptyGlobals includes emptyContext templateString
+
 
 
     let private missingIncludesTestData: obj [][] = [|
@@ -66,10 +120,6 @@ module ``Template Engine Uses Includes`` =
             "<%@ include view='someInclude' %><%= greet('World') %>"
             includes.Add("someInclude", """<%=""")
         |]
-        //[| 
-        //    "<%@ include view='someInclude' %><%= greet('World') %>";
-        //    includes.Add("someInclude", """%>""")
-        //|]
         [| 
             "<%@ include view='someInclude' %><%= greet('World') %>";
             includes.Add("someInclude", """a<%b""")

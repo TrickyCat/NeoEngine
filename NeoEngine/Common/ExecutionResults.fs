@@ -1,7 +1,7 @@
-﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine
+﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults
 
 open System
-open TrickyCat.Text.TemplateEngines.NeoEngine.Common
+open TrickyCat.Text.TemplateEngines.NeoEngine.Utils
 
 module Errors =
 
@@ -85,11 +85,12 @@ module Errors =
                     let hint = lines.[2]
 
                     let errorMessage =
-                        if lines.[3].Contains(":") then                         //TODO: check index!!!!!!
+                        if lines.Length > 3 && lines.[3].Contains(":") then
                             lines.[3].Split ':' |> Array.last |> trim |> Some
                         else
                             None
-                    let st = if lines.Length > 3 then String.Join("\n", lines.[4..] |> Array.map trim) else ""
+                    let st = if lines.Length > 4 then String.Join("\n", lines.[4..] |> Array.map trim) else ""
+
                     Some { title = title; lineNumber = lineNumber; errorMessage = errorMessage; failingString = failingString; failingStringPointerHint = hint; stackTrace = st }
                 else
                     None
@@ -120,3 +121,8 @@ module Errors =
     let includeNotFound = IncludeNotFound >> RunnerError
 
     let error = GeneralError
+
+
+open Errors
+
+type EngineResult = Result<string, EngineError>

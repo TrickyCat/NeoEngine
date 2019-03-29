@@ -4,7 +4,7 @@ open System.Collections.Generic
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.ParserApi
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.TemplateRunner
 open TrickyCat.Text.TemplateEngines.NeoEngine.ResultCommon
-open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
+open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults
 
 type ITemplateService =
     /// <summary>
@@ -15,7 +15,7 @@ type ITemplateService =
     /// Not null.
     /// </param>
     /// <param name="includes">
-    /// A lookup dictionary for resolution of includes being referenced from the template. Syntactically they are also templates.
+    /// A lookup dictionary for resolution of includes being referenced within the template and\or include. Syntactically they are also templates.
     /// Not null.
     /// </param>
     /// <param name="template">
@@ -27,13 +27,13 @@ type ITemplateService =
     /// Not null.
     /// </param>
     /// <returns>Result value with rendered template string in case of success or with the error in case of failure.</returns>
-    /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,TrickyCat.Text.TemplateEngines.NeoEngine.Runners.RunnerErrors.RunnerError}"/>
+    /// <seealso cref="Microsoft.FSharp.Core.FSharpResult{System.String,TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors.EngineError}"/>
     abstract RenderTemplateString:
         globals: string seq
         -> includes: IReadOnlyDictionary<string, string>
         -> template: string
         -> context: KeyValuePair<string, string> seq
-        -> Result<string, EngineError>
+        -> EngineResult
 
 
 type TemplateService() = 

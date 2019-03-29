@@ -1,30 +1,24 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests
 
 open ``Template Engine Tests Common``
-open FsUnitTyped
 open NUnit.Framework
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.Helpers
-open TrickyCat.Text.TemplateEngines.NeoEngine.Errors
+open TrickyCat.Text.TemplateEngines.NeoEngine.ExecutionResults.Errors
 open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.Common
 open Errors
+open Swensen.Unquote
 
 module ``Template Engine Uses Globals`` =
 
     let private successTestData: obj [][] = [|
         [| "<%= greet('World') %>"; renderOk "Hello, World!" |]
-        [| "<%= f() %>"; renderOk "" |]
-        [| "<%= f(x) %>"; renderOk "" |]
-        [| "<%= f(100) %>"; renderOk "" |]
         [| "<%= foo(11) %>"; renderOk "221" |]
         [| "<%= greet(foo(10)) %>"; renderOk "Hello, 200!" |]
-        [| "<%= greet(foo(10)) + '' + f() %>"; renderOk "" |]
-        [| "<%= greet(foo(10)) %><%= f() %><%= f(x) %>"; renderOk "Hello, 200!" |]
 
         [| "<%= magicNumber %>"; renderOk "7" |]
         [| "<%= magicNumber2 %>"; renderOk "10" |]
         [| "<%= magicNumber3 %>"; renderOk "3" |]
         [| "<%= magicNumber4 %>"; renderOk "9" |]
-
     |]
 
     let private globals = seq {
@@ -56,15 +50,14 @@ module ``Template Engine Uses Globals`` =
 
     [<Test; TestCaseSource("successTestData")>]
     let ``Template Engine Should Use Globals`` templateString expected =
-        renderTemplate globals emptyIncludes emptyContext templateString
-        |> shouldEqual expected
+        expected =! renderTemplate globals emptyIncludes emptyContext templateString
 
 
     let private noOverridesForGlobalConstantsTestData: obj [][] = [| 
         [| "<% const c1 = 2; %>"; E.jsError (JsSyntaxError) |]
-        [| "<% let c1 = 2; %>"; E.jsError (JsSyntaxError) |]
-        [| "<% var c1 = 2; %>"; E.jsError (JsSyntaxError) |]
-        [| "<% c1 = 2; %>"; E.jsError (JsTypeError) |]
+        [| "<% let c1 = 2; %>";   E.jsError (JsSyntaxError) |]
+        [| "<% var c1 = 2; %>";   E.jsError (JsSyntaxError) |]
+        [| "<% c1 = 2; %>";       E.jsError (JsTypeError) |]
     |]
 
     [<Test; TestCaseSource("noOverridesForGlobalConstantsTestData")>]
@@ -106,8 +99,7 @@ module ``Template Engine Uses Globals`` =
 
     [<Test; TestCaseSource("overridesForGlobalVarsTestData")>]
     let ``Template can override global 'var' bindings with 'var' and 'implicit var'`` templateString expected =
-        renderTemplate (seq { yield "var v1 = 1;" }) emptyIncludes emptyContext templateString
-        |> shouldEqual expected
+        expected =! renderTemplate (seq { yield "var v1 = 1;" }) emptyIncludes emptyContext templateString
 
 
 
@@ -119,8 +111,7 @@ module ``Template Engine Uses Globals`` =
 
     [<Test; TestCaseSource("overridesForGlobalImplicitVarsTestData")>]
     let ``Template can override global implicit 'var' bindings with 'var' and 'implicit var'`` templateString expected =
-        renderTemplate (seq { yield "v1 = 1;" }) emptyIncludes emptyContext templateString
-        |> shouldEqual expected
+        expected =! renderTemplate (seq { yield "v1 = 1;" }) emptyIncludes emptyContext templateString
 
 
 
@@ -134,11 +125,11 @@ module ``Template Engine Uses Globals`` =
 
     [<Test; TestCaseSource("canLookupGlobalValues")>]
     let ``Template's code can lookup global values`` templateString expected =
-        renderTemplate (seq { yield """
-        var v1 = 100;
-        const c1 = 200;
-        let l1 = 300;
-        v2 = 400;
-        function f(){}
-        """ }) emptyIncludes emptyContext templateString
-        |> shouldEqual expected
+
+            expected =! renderTemplate (seq { yield """
+                    var   v1 = 100;
+                    const c1 = 200;
+                    let   l1 = 300;
+                            v2 = 400;
+                    function f(){}
+                    """ }) emptyIncludes emptyContext templateString

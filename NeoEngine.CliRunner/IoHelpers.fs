@@ -4,7 +4,7 @@ open Newtonsoft.Json
 open System.Collections.Generic
 open System.IO
 open System
-open TrickyCat.Text.TemplateEngines.NeoEngine.Common
+open TrickyCat.Text.TemplateEngines.NeoEngine.Utils
 
 module IoHelpers =
 

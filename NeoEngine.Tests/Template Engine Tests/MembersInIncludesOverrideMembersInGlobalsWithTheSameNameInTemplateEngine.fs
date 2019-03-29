@@ -1,9 +1,9 @@
 ﻿namespace TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests
 
 open ``Template Engine Tests Common``
-open FsUnitTyped
 open NUnit.Framework
 open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.Helpers
+open Swensen.Unquote
 
 module ``Members In Includes Override Members In Globals With The Same Name In Template Engine`` =
 
@@ -38,5 +38,4 @@ module ``Members In Includes Override Members In Globals With The Same Name In T
 
     [<Test; TestCaseSource("successTestData")>]
     let ``Template Engine Should Allow Members In Includes To Override Members In Globals With The Same Name`` templateString expected =
-        renderTemplate globals includes emptyContext templateString
-        |> shouldEqual expected
+        expected =! renderTemplate globals includes emptyContext templateString

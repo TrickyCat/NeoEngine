@@ -2,7 +2,7 @@
 
 open System.Text
 open ParserApi
-open TrickyCat.Text.TemplateEngines.NeoEngine.Common
+open TrickyCat.Text.TemplateEngines.NeoEngine.Utils
 
 module ParserHelpers =
 

@@ -27,7 +27,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
-    <StartArguments>-t "c:\Work\Neolane\migration\Neolane Templates\ES\pdcJaEsTrxPasswordReset\pdcJaEsTrxPasswordReset.html" -i "c:\Work\Neolane\migration\Neolane Includes" -g "c:\Work\Neolane\migration\Global Scope" -c "c:\Work\Neolane\migration\run\All\data.json" -o "render.result" --no-console-result</StartArguments>
+    <StartArguments></StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

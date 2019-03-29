@@ -5,6 +5,7 @@ open FsUnitTyped
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.ParserCore
 open TrickyCat.Text.TemplateEngines.NeoEngine.Parsers.ParserApi
 open System
+open Swensen.Unquote
 
 #nowarn "59"
 module ``Parser Tests Common`` =
@@ -24,8 +25,7 @@ module ``Parser Tests Common`` =
 
 
     let runParserOnSuccessfulData parserUnderTest (templateString, expected) =
-        runParser parserUnderTest templateString
-        |> shouldEqual expected
+        expected =! runParser parserUnderTest templateString
 
 
     let runParserOnUnsupportedData parserUnderTest templateString =
