@@ -6,8 +6,11 @@ open TrickyCat.Text.TemplateEngines.NeoEngine.Runners.Helpers
 open TrickyCat.Text.TemplateEngines.NeoEngine.Tests.TemplateEngineTests.Common
 open Errors
 open Swensen.Unquote
+open System
 
 module ``Template Engine Uses Includes`` =
+
+    let private singleLine (s: string) = s.Replace("\r\n", String.Empty).Replace("\n", String.Empty)
 
     let private successTestData: obj [][] = [|
         [| "<%@ include view='include1' %><%= greet('World') %>"; renderOk "Hello, World!" |]
@@ -53,7 +56,7 @@ module ``Template Engine Uses Includes`` =
 
 
     let private noNestedScopesForIncludesTestData: obj [][] = [|
-        [| """
+        [| singleLine """
         <%@ include view='include1' %>
         <%= greet('World') %>
         <% if (true) { %>
@@ -61,7 +64,8 @@ module ``Template Engine Uses Includes`` =
             <%= greet('World') %>
         <% } %>
         <%= greet('World') %>
-        """; renderOk """
+        """
+        ; renderOk << singleLine <| """
         
         Hello, World!
         
@@ -73,7 +77,7 @@ module ``Template Engine Uses Includes`` =
 
 
 
-        [| """
+        [| singleLine """
         <%@ include view='include1' %>
         <%= greet('World') %>
         <% if (false) { %>
@@ -83,7 +87,8 @@ module ``Template Engine Uses Includes`` =
             <%= greet('World') %>
         <% } %>
         <%= greet('World') %>
-        """; renderOk """
+        """
+        ; renderOk << singleLine <| """
         
         Hello, World!
         
@@ -95,7 +100,7 @@ module ``Template Engine Uses Includes`` =
 
     |]
 
-    //[<Test; TestCaseSource("noNestedScopesForIncludesTestData")>]
+    [<Test; TestCaseSource("noNestedScopesForIncludesTestData")>]
     let ``Template Engine Does Not Currently Support Nested Scopes For Include References`` templateString expected =
         expected =! renderTemplate emptyGlobals includes emptyContext templateString
 
