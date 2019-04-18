@@ -288,9 +288,16 @@ module ``'formatDate' Function Tests`` =
     let private globals = seq {
         yield! defaultGlobals
         yield """
-        const tzOffset = (- new Date().getTimezoneOffset()) / 60;
-        const tzString = `${ tzOffset > 0 ? '+' : '' }${tzOffset}`;
-        const d = new Date(`Wed Jan 23 2019 11:41:25 GMT${tzString}`);
+        const getTzOffsetString = tzOffset => `${ tzOffset > 0 ? '+' : '' }${tzOffset}`;
+        const getTzOffset = () => {
+            const tzOffset = (- new Date().getTimezoneOffset()) / 60;
+            const tzString = getTzOffsetString(tzOffset);    
+            const summerWinterDate = new Date(`Wed Jan 23 2019 11:00:00 GMT${tzString}`);
+            const delta = summerWinterDate.getHours() - 11;
+
+            return getTzOffsetString(tzOffset + delta);
+        };
+        const d = new Date(`Wed Jan 23 2019 11:41:25 GMT${getTzOffset()}`);
         """
         }
 
